@@ -1,35 +1,27 @@
-# Minetest Game
+# ⚠️ PROJECT ARCHIVED
+This project is no longer under active development and is preserved here for historical purposes only. This project was an old fork of Minetest's official [GitHub](https://github.com/minetest/minetest).
 
-The default game bundled in the Minetest engine.  
+# ⛏️ Minetest Game (Archived)
+This was the default game bundled with the Minetest engine.
 
-For further information, check 
-[this forum topic](https://forum.minetest.net/viewtopic.php?f=15&t=9724).   
-Also see the [Minetest Wiki](https://wiki.minetest.net/Subgames/Minetest_Game) 
-for more information.
+For historical information, you can still check the [original forum topic](https://forum.minetest.net/viewtopic.php?f=15&t=9724) or the [Minetest Wiki](https://wiki.minetest.net/Subgames/Minetest_Game) for more information.
 
-## Installation
+# ℹ️ Status Notice
+Active Development: Stopped.
 
-- Unzip the archive, rename the folder to minetest_game and
-place it in .. minetest/games/
+Support: No longer provided.
 
-- GNU/Linux: If you use a system-wide installation place
-    it in ~/.minetest/games/.
+Successor: Users are encouraged to check Minetest's official [GitHub](https://github.com/minetest/minetest) for the latest default game implementations.
+
+# ⬇️ Installation (Legacy)
+Unzip the archive, rename the folder to 'minetest_game' and place it in '../minetest/games/'
+
+GNU/Linux: If you use a system-wide installation, place it in '~/.minetest/games/'.
 
 The Minetest engine can be found at [GitHub](https://github.com/minetest/minetest).
 
-For further information or help, see:  
-https://wiki.minetest.net/Installing_Mods
+# 🏛️ Compatibility
+Historically, the Minetest Game master HEAD was kept compatible with the master HEAD of the Minetest engine. When stable releases were made, Minetest Game and the Minetest engine were packaged together at [www.minetest.net](https://www.minetest.net/downloads).
 
-## Compatibility
-
-The Minetest Game GitHub master HEAD is generally compatible with the GitHub
-master HEAD of the Minetest engine.  
-Additionally, when the Minetest engine is tagged to be a certain version (e.g.
-0.4.10), Minetest Game is tagged with the version too.
-
-When stable releases are made, Minetest Game and the Minetest engine is packaged 
-and made available at [www.minetest.net](https://www.minetest.net/downloads/).
-
-## Licensing
-
-See `LICENSE.txt`
+# ℹ️ Licensing
+See 'LICENSE.txt' for details on the original licensing.
