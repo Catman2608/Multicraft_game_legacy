@@ -1,17 +1,17 @@
-Minetest Game API
+MultiCraft Game API
 =================
-GitHub Repo: https://github.com/minetest/minetest_game
+GitHub Repo: https://github.com/MultiCraft/MultiCraft_game
 
 
 Introduction
 ------------
 
-The Minetest Game game offers multiple new possibilities in addition to the Minetest engine's built-in API,
+The MultiCraft Game game offers multiple new possibilities in addition to the MultiCraft engine's built-in API,
 allowing you to add new plants to farming mod, buckets for new liquids, new stairs and custom panes.
-For information on the Minetest API, visit https://github.com/minetest/minetest/blob/master/doc/lua_api.txt
+For information on the MultiCraft API, visit https://github.com/MultiCraft/MultiCraft/blob/master/doc/lua_api.txt
 Please note:
 
- * [XYZ] refers to a section the Minetest API
+ * [XYZ] refers to a section the MultiCraft API
  * [#ABC] refers to a section in this document
  * [pos] refers to a position table `{x = -5, y = 0, z = 200}`
 
@@ -88,13 +88,13 @@ Creative API
 Use `creative.register_tab(name, title, items)` to add a tab with filtered items.
 For example,
 
-	creative.register_tab("tools", "Tools", minetest.registered_tools)
+	creative.register_tab("tools", "Tools", MultiCraft.registered_tools)
 
 is used to show all tools. Name is used in the sfinv page name, title is the
 human readable title.
 
 Creative provides `creative.is_enabled_for(name)`, which is identical in
-functionality to the engine's `minetest.creative_is_enabled(name)`.
+functionality to the engine's `MultiCraft.creative_is_enabled(name)`.
 Its use is deprecated and it should also not be overriden.
 
 The contents of `creative.formspec_add` is appended to every creative inventory
@@ -505,7 +505,7 @@ TNT API
  * `damage_radius` The radius within which the TNT can damage players and mobs. By default it is twice the `radius`.
  * `sound` The sound played when explosion occurs. By default it is `tnt_explode`.
  * `disable_drops` Disable drops. By default it is set to false.
- * `ignore_protection` Don't check `minetest.is_protected` before removing a node.
+ * `ignore_protection` Don't check `MultiCraft.is_protected` before removing a node.
  * `ignore_on_blast` Don't call `on_blast` even if a node has one.
  * `tiles` Textures for node
   * `side`  Side tiles. By default the name of the tnt with a suffix of `_side.png`.
@@ -612,7 +612,7 @@ Sfinv API
 ---------
 
 It is recommended that you read this link for a good introduction to the
-sfinv API by its author: https://rubenwardy.com/minetest_modding_book/en/chapters/sfinv.html
+sfinv API by its author: https://rubenwardy.com/MultiCraft_modding_book/en/chapters/sfinv.html
 
 ### sfinv Methods
 
@@ -721,7 +721,7 @@ Stairs API
 ----------
 
 The stairs API lets you register stairs and slabs and ensures that they are registered the same way as those
-delivered with Minetest Game, to keep them compatible with other mods.
+delivered with MultiCraft Game, to keep them compatible with other mods.
 
 `stairs.register_stair(subname, recipeitem, groups, images, description, sounds, worldaligntex)`
 
@@ -813,7 +813,7 @@ Raillike definitions
 
 The following nodes use the group `connect_to_raillike` and will only connect to
 raillike nodes within this group and the same group value.
-Use `minetest.raillike_group(<Name>)` to get the group value.
+Use `MultiCraft.raillike_group(<Name>)` to get the group value.
 
 | Node type             | Raillike group name
 |-----------------------|---------------------
@@ -823,7 +823,7 @@ Use `minetest.raillike_group(<Name>)` to get the group value.
 
 Example:
 If you want to add a new rail type and want it to connect with default:rail,
-add `connect_to_raillike=minetest.raillike_group("rail")` into the `groups` table
+add `connect_to_raillike=MultiCraft.raillike_group("rail")` into the `groups` table
 of your node.
 
 
@@ -921,7 +921,7 @@ callback overridden. All the nodes listed in `leaves` have their
 Dyes
 ----
 
-Minetest Game dyes are registered with:
+MultiCraft Game dyes are registered with:
 
     groups = {dye = 1, color_<color> = 1},
 
@@ -948,7 +948,7 @@ Dye color groups:
 
 Example of one shapeless recipe using the dye group and a color group:
 
-	minetest.register_craft({
+	MultiCraft.register_craft({
 		type = "shapeless",
 		output = "<mod>:item_yellow",
 		recipe = {"<mod>:item_no_color", "group:dye,color_yellow"},

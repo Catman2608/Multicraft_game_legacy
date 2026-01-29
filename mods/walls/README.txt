@@ -1,4 +1,4 @@
-Minetest Game mod: walls
+MultiCraft Game mod: walls
 ========================
 See license.txt for license information.
 

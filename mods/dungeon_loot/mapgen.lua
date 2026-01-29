@@ -1,4 +1,4 @@
-minetest.set_gen_notify({dungeon = true, temple = true})
+MultiCraft.set_gen_notify({dungeon = true, temple = true})
 
 local function noise3d_integer(noise, pos)
 	return math.abs(math.floor(noise:get_3d(pos) * 0x7fffffff))
@@ -20,7 +20,7 @@ local function find_walls(cpos)
 	end
 
 	local dirs = {{x=1, z=0}, {x=-1, z=0}, {x=0, z=1}, {x=0, z=-1}}
-	local get_node = minetest.get_node
+	local get_node = MultiCraft.get_node
 
 	local ret = {}
 	local mindist = {x=0, z=0}
@@ -52,8 +52,8 @@ local function find_walls(cpos)
 		end
 	end
 
-	local biome = minetest.get_biome_data(cpos)
-	biome = biome and minetest.get_biome_name(biome.biome) or ""
+	local biome = MultiCraft.get_biome_data(cpos)
+	biome = biome and MultiCraft.get_biome_name(biome.biome) or ""
 	local type = "normal"
 	if biome:find("desert") == 1 then
 		type = "desert"
@@ -71,8 +71,8 @@ local function find_walls(cpos)
 end
 
 local function populate_chest(pos, rand, dungeontype)
-	--minetest.chat_send_all("chest placed at " .. minetest.pos_to_string(pos) .. " [" .. dungeontype .. "]")
-	--minetest.add_node(vector.add(pos, {x=0, y=1, z=0}), {name="default:torch", param2=1})
+	--MultiCraft.chat_send_all("chest placed at " .. MultiCraft.pos_to_string(pos) .. " [" .. dungeontype .. "]")
+	--MultiCraft.add_node(vector.add(pos, {x=0, y=1, z=0}), {name="default:torch", param2=1})
 
 	local item_list = dungeon_loot._internal_get_loot(pos.y, dungeontype)
 	-- take random (partial) sample of all possible items
@@ -83,14 +83,14 @@ local function populate_chest(pos, rand, dungeontype)
 	local items = {}
 	for _, loot in ipairs(item_list) do
 		if rand:next(0, 1000) / 1000 <= loot.chance then
-			local itemdef = minetest.registered_items[loot.name]
+			local itemdef = MultiCraft.registered_items[loot.name]
 			local amount = 1
 			if loot.count ~= nil then
 				amount = rand:next(loot.count[1], loot.count[2])
 			end
 
 			if not itemdef then
-				minetest.log("warning", "Registered loot item " .. loot.name .. " does not exist")
+				MultiCraft.log("warning", "Registered loot item " .. loot.name .. " does not exist")
 			elseif itemdef.tool_capabilities then
 				for n = 1, amount do
 					local wear = rand:next(0.20 * 65535, 0.75 * 65535) -- 20% to 75% wear
@@ -108,7 +108,7 @@ local function populate_chest(pos, rand, dungeontype)
 	end
 
 	-- place items at random places in chest
-	local inv = minetest.get_meta(pos):get_inventory()
+	local inv = MultiCraft.get_meta(pos):get_inventory()
 	local listsz = inv:get_size("main")
 	assert(listsz >= #items)
 	for _, item in ipairs(items) do
@@ -122,15 +122,15 @@ local function populate_chest(pos, rand, dungeontype)
 end
 
 
-minetest.register_on_generated(function(minp, maxp, blockseed)
-	local gennotify = minetest.get_mapgen_object("gennotify")
+MultiCraft.register_on_generated(function(minp, maxp, blockseed)
+	local gennotify = MultiCraft.get_mapgen_object("gennotify")
 	local poslist = gennotify["dungeon"] or {}
 	for _, entry in ipairs(gennotify["temple"] or {}) do
 		table.insert(poslist, entry)
 	end
 	if #poslist == 0 then return end
 
-	local noise = minetest.get_perlin(10115, 4, 0.5, 1)
+	local noise = MultiCraft.get_perlin(10115, 4, 0.5, 1)
 	local rand = PcgRandom(noise3d_integer(noise, poslist[1]))
 
 	local candidates = {}
@@ -161,10 +161,10 @@ minetest.register_on_generated(function(minp, maxp, blockseed)
 		local off = rand:next(-room.size[vi]/2 + 1, room.size[vi]/2 - 1)
 		chestpos = vector.add(chestpos, vector.multiply(v, off))
 
-		if minetest.get_node(chestpos).name == "air" then
+		if MultiCraft.get_node(chestpos).name == "air" then
 			-- make it face inwards to the room
-			local facedir = minetest.dir_to_facedir(vector.multiply(wall.facing, -1))
-			minetest.add_node(chestpos, {name = "default:chest", param2 = facedir})
+			local facedir = MultiCraft.dir_to_facedir(vector.multiply(wall.facing, -1))
+			MultiCraft.add_node(chestpos, {name = "default:chest", param2 = facedir})
 			populate_chest(chestpos, PcgRandom(noise3d_integer(noise, chestpos)), room.type)
 		end
 	end

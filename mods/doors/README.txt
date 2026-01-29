@@ -1,4 +1,4 @@
-Minetest Game mod: doors
+MultiCraft Game mod: doors
 ========================
 See license.txt for license information.
 
@@ -14,7 +14,7 @@ Re-implemented most of the door algorithms, added meshes, UV wrapped texture.
 Added doors API to facilitate coding mods accessing and operating doors.
 Added Fence Gate model, code, and sounds.
 
-Various Minetest developers and contributors (MIT)
+Various MultiCraft developers and contributors (MIT)
 
 
 Authors of media (textures)

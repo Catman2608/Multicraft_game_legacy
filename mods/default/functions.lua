@@ -150,16 +150,16 @@ end
 
 default.cool_lava = function(pos, node)
 	if node.name == "default:lava_source" then
-		minetest.set_node(pos, {name = "default:obsidian"})
+		MultiCraft.set_node(pos, {name = "default:obsidian"})
 	else -- Lava flowing
-		minetest.set_node(pos, {name = "default:stone"})
+		MultiCraft.set_node(pos, {name = "default:stone"})
 	end
-	minetest.sound_play("default_cool_lava",
+	MultiCraft.sound_play("default_cool_lava",
 		{pos = pos, max_hear_distance = 16, gain = 0.25}, true)
 end
 
-if minetest.settings:get_bool("enable_lavacooling") ~= false then
-	minetest.register_abm({
+if MultiCraft.settings:get_bool("enable_lavacooling") ~= false then
+	MultiCraft.register_abm({
 		label = "Lava cooling",
 		nodenames = {"default:lava_source", "default:lava_flowing"},
 		neighbors = {"group:cools_lava", "group:water"},
@@ -178,7 +178,7 @@ end
 --
 
 function default.get_inventory_drops(pos, inventory, drops)
-	local inv = minetest.get_meta(pos):get_inventory()
+	local inv = MultiCraft.get_meta(pos):get_inventory()
 	local n = #drops
 	for i = 1, inv:get_size(inventory) do
 		local stack = inv:get_stack(inventory, i)
@@ -201,7 +201,7 @@ function default.grow_cactus(pos, node)
 		return
 	end
 	pos.y = pos.y - 1
-	if minetest.get_item_group(minetest.get_node(pos).name, "sand") == 0 then
+	if MultiCraft.get_item_group(MultiCraft.get_node(pos).name, "sand") == 0 then
 		return
 	end
 	pos.y = pos.y + 1
@@ -209,21 +209,21 @@ function default.grow_cactus(pos, node)
 	while node.name == "default:cactus" and height < 4 do
 		height = height + 1
 		pos.y = pos.y + 1
-		node = minetest.get_node(pos)
+		node = MultiCraft.get_node(pos)
 	end
 	if height == 4 or node.name ~= "air" then
 		return
 	end
-	if minetest.get_node_light(pos) < 13 then
+	if MultiCraft.get_node_light(pos) < 13 then
 		return
 	end
-	minetest.set_node(pos, {name = "default:cactus"})
+	MultiCraft.set_node(pos, {name = "default:cactus"})
 	return true
 end
 
 function default.grow_papyrus(pos, node)
 	pos.y = pos.y - 1
-	local name = minetest.get_node(pos).name
+	local name = MultiCraft.get_node(pos).name
 	if name ~= "default:dirt" and
 			name ~= "default:dirt_with_grass" and
 			name ~= "default:dirt_with_dry_grass" and
@@ -232,7 +232,7 @@ function default.grow_papyrus(pos, node)
 			name ~= "default:dry_dirt_with_dry_grass" then
 		return
 	end
-	if not minetest.find_node_near(pos, 3, {"group:water"}) then
+	if not MultiCraft.find_node_near(pos, 3, {"group:water"}) then
 		return
 	end
 	pos.y = pos.y + 1
@@ -240,19 +240,19 @@ function default.grow_papyrus(pos, node)
 	while node.name == "default:papyrus" and height < 4 do
 		height = height + 1
 		pos.y = pos.y + 1
-		node = minetest.get_node(pos)
+		node = MultiCraft.get_node(pos)
 	end
 	if height == 4 or node.name ~= "air" then
 		return
 	end
-	if minetest.get_node_light(pos) < 13 then
+	if MultiCraft.get_node_light(pos) < 13 then
 		return
 	end
-	minetest.set_node(pos, {name = "default:papyrus"})
+	MultiCraft.set_node(pos, {name = "default:papyrus"})
 	return true
 end
 
-minetest.register_abm({
+MultiCraft.register_abm({
 	label = "Grow cactus",
 	nodenames = {"default:cactus"},
 	neighbors = {"group:sand"},
@@ -263,7 +263,7 @@ minetest.register_abm({
 	end
 })
 
-minetest.register_abm({
+MultiCraft.register_abm({
 	label = "Grow papyrus",
 	nodenames = {"default:papyrus"},
 	-- Grows on the dirt and surface dirt nodes of the biomes papyrus appears in,
@@ -292,9 +292,9 @@ minetest.register_abm({
 function default.dig_up(pos, node, digger)
 	if digger == nil then return end
 	local np = {x = pos.x, y = pos.y + 1, z = pos.z}
-	local nn = minetest.get_node(np)
+	local nn = MultiCraft.get_node(np)
 	if nn.name == node.name then
-		minetest.node_dig(np, nn, digger)
+		MultiCraft.node_dig(np, nn, digger)
 	end
 end
 
@@ -302,10 +302,10 @@ end
 --
 -- Fence registration helper
 --
-local fence_collision_extra = minetest.settings:get_bool("enable_fence_tall") and 3/8 or 0
+local fence_collision_extra = MultiCraft.settings:get_bool("enable_fence_tall") and 3/8 or 0
 
 function default.register_fence(name, def)
-	minetest.register_craft({
+	MultiCraft.register_craft({
 		output = name .. " 4",
 		recipe = {
 			{ def.material, 'group:stick', def.material },
@@ -363,7 +363,7 @@ function default.register_fence(name, def)
 	def.texture = nil
 	def.material = nil
 
-	minetest.register_node(name, def)
+	MultiCraft.register_node(name, def)
 end
 
 
@@ -372,7 +372,7 @@ end
 --
 
 function default.register_fence_rail(name, def)
-	minetest.register_craft({
+	MultiCraft.register_craft({
 		output = name .. " 16",
 		recipe = {
 			{ def.material, def.material },
@@ -432,7 +432,7 @@ function default.register_fence_rail(name, def)
 	def.texture = nil
 	def.material = nil
 
-	minetest.register_node(name, def)
+	MultiCraft.register_node(name, def)
 end
 
 --
@@ -440,7 +440,7 @@ end
 --
 
 function default.register_mesepost(name, def)
-	minetest.register_craft({
+	MultiCraft.register_craft({
 		output = name .. " 4",
 		recipe = {
 			{'', 'default:glass', ''},
@@ -479,7 +479,7 @@ function default.register_mesepost(name, def)
 	def.texture = nil
 	def.material = nil
 
-	minetest.register_node(name, def)
+	MultiCraft.register_node(name, def)
 end
 
 --
@@ -490,18 +490,18 @@ end
 
 default.after_place_leaves = function(pos, placer, itemstack, pointed_thing)
 	if placer and placer:is_player() then
-		local node = minetest.get_node(pos)
+		local node = MultiCraft.get_node(pos)
 		node.param2 = 1
-		minetest.set_node(pos, node)
+		MultiCraft.set_node(pos, node)
 	end
 end
 
 -- Leafdecay
 local function leafdecay_after_destruct(pos, oldnode, def)
-	for _, v in pairs(minetest.find_nodes_in_area(vector.subtract(pos, def.radius),
+	for _, v in pairs(MultiCraft.find_nodes_in_area(vector.subtract(pos, def.radius),
 			vector.add(pos, def.radius), def.leaves)) do
-		local node = minetest.get_node(v)
-		local timer = minetest.get_node_timer(v)
+		local node = MultiCraft.get_node(v)
+		local timer = MultiCraft.get_node_timer(v)
 		if node.param2 ~= 1 and not timer:is_started() then
 			timer:start(math.random(20, 120) / 10)
 		end
@@ -509,15 +509,15 @@ local function leafdecay_after_destruct(pos, oldnode, def)
 end
 
 local movement_gravity = tonumber(
-	minetest.settings:get("movement_gravity")) or 9.81
+	MultiCraft.settings:get("movement_gravity")) or 9.81
 
 local function leafdecay_on_timer(pos, def)
-	if minetest.find_node_near(pos, def.radius, def.trunks) then
+	if MultiCraft.find_node_near(pos, def.radius, def.trunks) then
 		return false
 	end
 
-	local node = minetest.get_node(pos)
-	local drops = minetest.get_node_drops(node.name)
+	local node = MultiCraft.get_node(pos)
+	local drops = MultiCraft.get_node_drops(node.name)
 	for _, item in ipairs(drops) do
 		local is_leaf
 		for _, v in pairs(def.leaves) do
@@ -525,9 +525,9 @@ local function leafdecay_on_timer(pos, def)
 				is_leaf = true
 			end
 		end
-		if minetest.get_item_group(item, "leafdecay_drop") ~= 0 or
+		if MultiCraft.get_item_group(item, "leafdecay_drop") ~= 0 or
 				not is_leaf then
-			minetest.add_item({
+			MultiCraft.add_item({
 				x = pos.x - 0.5 + math.random(),
 				y = pos.y - 0.5 + math.random(),
 				z = pos.z - 0.5 + math.random(),
@@ -535,11 +535,11 @@ local function leafdecay_on_timer(pos, def)
 		end
 	end
 
-	minetest.remove_node(pos)
-	minetest.check_for_falling(pos)
+	MultiCraft.remove_node(pos)
+	MultiCraft.check_for_falling(pos)
 
 	-- spawn a few particles for the removed node
-	minetest.add_particlespawner({
+	MultiCraft.add_particlespawner({
 		amount = 8,
 		time = 0.001,
 		minpos = vector.subtract(pos, {x=0.5, y=0.5, z=0.5}),
@@ -559,14 +559,14 @@ function default.register_leafdecay(def)
 	assert(def.trunks)
 	assert(def.radius)
 	for _, v in pairs(def.trunks) do
-		minetest.override_item(v, {
+		MultiCraft.override_item(v, {
 			after_destruct = function(pos, oldnode)
 				leafdecay_after_destruct(pos, oldnode, def)
 			end,
 		})
 	end
 	for _, v in pairs(def.leaves) do
-		minetest.override_item(v, {
+		MultiCraft.override_item(v, {
 			on_timer = function(pos)
 				leafdecay_on_timer(pos, def)
 			end,
@@ -579,7 +579,7 @@ end
 -- Convert default:dirt to something that fits the environment
 --
 
-minetest.register_abm({
+MultiCraft.register_abm({
 	label = "Grass spread",
 	nodenames = {"default:dirt"},
 	neighbors = {
@@ -595,27 +595,27 @@ minetest.register_abm({
 		-- Check for darkness: night, shadow or under a light-blocking node
 		-- Returns if ignore above
 		local above = {x = pos.x, y = pos.y + 1, z = pos.z}
-		if (minetest.get_node_light(above) or 0) < 13 then
+		if (MultiCraft.get_node_light(above) or 0) < 13 then
 			return
 		end
 
 		-- Look for spreading dirt-type neighbours
-		local p2 = minetest.find_node_near(pos, 1, "group:spreading_dirt_type")
+		local p2 = MultiCraft.find_node_near(pos, 1, "group:spreading_dirt_type")
 		if p2 then
-			local n3 = minetest.get_node(p2)
-			minetest.set_node(pos, {name = n3.name})
+			local n3 = MultiCraft.get_node(p2)
+			MultiCraft.set_node(pos, {name = n3.name})
 			return
 		end
 
 		-- Else, any seeding nodes on top?
-		local name = minetest.get_node(above).name
+		local name = MultiCraft.get_node(above).name
 		-- Snow check is cheapest, so comes first
 		if name == "default:snow" then
-			minetest.set_node(pos, {name = "default:dirt_with_snow"})
-		elseif minetest.get_item_group(name, "grass") ~= 0 then
-			minetest.set_node(pos, {name = "default:dirt_with_grass"})
-		elseif minetest.get_item_group(name, "dry_grass") ~= 0 then
-			minetest.set_node(pos, {name = "default:dirt_with_dry_grass"})
+			MultiCraft.set_node(pos, {name = "default:dirt_with_snow"})
+		elseif MultiCraft.get_item_group(name, "grass") ~= 0 then
+			MultiCraft.set_node(pos, {name = "default:dirt_with_grass"})
+		elseif MultiCraft.get_item_group(name, "dry_grass") ~= 0 then
+			MultiCraft.set_node(pos, {name = "default:dirt_with_dry_grass"})
 		end
 	end
 })
@@ -625,7 +625,7 @@ minetest.register_abm({
 -- Grass and dry grass removed in darkness
 --
 
-minetest.register_abm({
+MultiCraft.register_abm({
 	label = "Grass covered",
 	nodenames = {"group:spreading_dirt_type", "default:dry_dirt_with_dry_grass"},
 	interval = 8,
@@ -633,15 +633,15 @@ minetest.register_abm({
 	catch_up = false,
 	action = function(pos, node)
 		local above = {x = pos.x, y = pos.y + 1, z = pos.z}
-		local name = minetest.get_node(above).name
-		local nodedef = minetest.registered_nodes[name]
+		local name = MultiCraft.get_node(above).name
+		local nodedef = MultiCraft.registered_nodes[name]
 		if name ~= "ignore" and nodedef and not ((nodedef.sunlight_propagates or
 				nodedef.paramtype == "light") and
 				nodedef.liquidtype == "none") then
 			if node.name == "default:dry_dirt_with_dry_grass" then
-				minetest.set_node(pos, {name = "default:dry_dirt"})
+				MultiCraft.set_node(pos, {name = "default:dry_dirt"})
 			else
-				minetest.set_node(pos, {name = "default:dirt"})
+				MultiCraft.set_node(pos, {name = "default:dirt"})
 			end
 		end
 	end
@@ -660,7 +660,7 @@ local moss_correspondences = {
 	["stairs:stair_outer_cobble"] = "stairs:stair_outer_mossycobble",
 	["walls:cobble"] = "walls:mossycobble",
 }
-minetest.register_abm({
+MultiCraft.register_abm({
 	label = "Moss growth",
 	nodenames = {"default:cobble", "stairs:slab_cobble", "stairs:stair_cobble",
 		"stairs:stair_inner_cobble", "stairs:stair_outer_cobble",
@@ -672,7 +672,7 @@ minetest.register_abm({
 	action = function(pos, node)
 		node.name = moss_correspondences[node.name]
 		if node.name then
-			minetest.set_node(pos, node)
+			MultiCraft.set_node(pos, node)
 		end
 	end
 })
@@ -682,13 +682,13 @@ minetest.register_abm({
 --
 
 function default.register_craft_metadata_copy(ingredient, result)
-	minetest.register_craft({
+	MultiCraft.register_craft({
 		type = "shapeless",
 		output = result,
 		recipe = {ingredient, result}
 	})
 
-	minetest.register_on_craft(function(itemstack, player, old_craft_grid, craft_inv)
+	MultiCraft.register_on_craft(function(itemstack, player, old_craft_grid, craft_inv)
 		if itemstack:get_name() ~= result then
 			return
 		end
@@ -719,14 +719,14 @@ end
 
 function default.can_interact_with_node(player, pos)
 	if player and player:is_player() then
-		if minetest.check_player_privs(player, "protection_bypass") then
+		if MultiCraft.check_player_privs(player, "protection_bypass") then
 			return true
 		end
 	else
 		return false
 	end
 
-	local meta = minetest.get_meta(pos)
+	local meta = MultiCraft.get_meta(pos)
 	local owner = meta:get_string("owner")
 
 	if not owner or owner == "" or owner == player:get_player_name() then
@@ -735,16 +735,16 @@ function default.can_interact_with_node(player, pos)
 
 	-- Is player wielding the right key?
 	local item = player:get_wielded_item()
-	if minetest.get_item_group(item:get_name(), "key") == 1 then
+	if MultiCraft.get_item_group(item:get_name(), "key") == 1 then
 		local key_meta = item:get_meta()
 
 		if key_meta:get_string("secret") == "" then
 			local key_oldmeta = item:get_metadata()
-			if key_oldmeta == "" or not minetest.parse_json(key_oldmeta) then
+			if key_oldmeta == "" or not MultiCraft.parse_json(key_oldmeta) then
 				return false
 			end
 
-			key_meta:set_string("secret", minetest.parse_json(key_oldmeta).secret)
+			key_meta:set_string("secret", MultiCraft.parse_json(key_oldmeta).secret)
 			item:set_metadata("")
 		end
 

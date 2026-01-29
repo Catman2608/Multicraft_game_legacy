@@ -1,8 +1,8 @@
-Minetest Game schematic tables
+MultiCraft Game schematic tables
 ==============================
 
 This document acts as the official record of all schematic tables used in
-Minetest Game, and should be updated by any commit that adds a table type
+MultiCraft Game, and should be updated by any commit that adds a table type
 schematic.
 
 The following tables are for pasting into mods that contain a function to
@@ -10,7 +10,7 @@ convert the Lua tables into .mts files. Such mods often have two functions to
 process two formats of the 'data' table:
 
 The standard table format is described in the 'Schematic specifier' section of
-the lua_api.txt file in the Minetest Engine.
+the lua_api.txt file in the MultiCraft Engine.
 The 'data' table appears as a sequence of vertical slices through the structure
 the schematic describes.
 Each XY-plane slice has the X-rows formatted in order of increasing Y, so the

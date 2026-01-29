@@ -1,10 +1,10 @@
--- Minetest 0.4 mod: default
+-- MultiCraft 0.4 mod: default
 -- See README.txt for licensing and other information.
 
 -- The API documentation in here was moved into game_api.txt
 
 -- Load support for MT game translation.
-local S = minetest.get_translator("default")
+local S = MultiCraft.get_translator("default")
 
 -- Definitions made by this mod that other mods can use too
 default = {}
@@ -17,23 +17,23 @@ default.get_translator = S
 -- and avoids obscure, hard to debug runtime errors.
 -- This section should be updated before release and older checks can be dropped
 -- when newer ones are introduced.
-if not minetest.is_creative_enabled or not minetest.has_feature({
+if not MultiCraft.is_creative_enabled or not MultiCraft.has_feature({
 		direct_velocity_on_players = true,
 		use_texture_alpha_string_modes = true,
 	}) then
-	error("\nThis version of Minetest Game is incompatible with your engine version "..
-		"(which is too old). You should download a version of Minetest Game that "..
+	error("\nThis version of MultiCraft Game is incompatible with your engine version "..
+		"(which is too old). You should download a version of MultiCraft Game that "..
 		"matches the installed engine version.\n")
 end
 
 -- GUI related stuff
-minetest.register_on_joinplayer(function(player)
+MultiCraft.register_on_joinplayer(function(player)
 	-- Set formspec prepend
 	local formspec = [[
 			bgcolor[#080808BB;true]
 			listcolors[#00000069;#5A5A5A;#141318;#30434C;#FFF] ]]
 	local name = player:get_player_name()
-	local info = minetest.get_player_information(name)
+	local info = MultiCraft.get_player_information(name)
 	if info.formspec_version > 1 then
 		formspec = formspec .. "background9[5,5;1,1;gui_formbg.png;true;10]"
 	else
@@ -65,7 +65,7 @@ default.gui_survival_form = "size[8,8.5]"..
 			default.get_hotbar_bg(0,4.25)
 
 -- Load files
-local default_path = minetest.get_modpath("default")
+local default_path = MultiCraft.get_modpath("default")
 
 dofile(default_path.."/functions.lua")
 dofile(default_path.."/trees.lua")

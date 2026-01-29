@@ -1,4 +1,4 @@
-Minetest Game mod: sethome
+MultiCraft Game mod: sethome
 ==========================
 See license.txt for license information.
 

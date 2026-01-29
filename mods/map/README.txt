@@ -1,4 +1,4 @@
-Minetest Game mod: map
+MultiCraft Game mod: map
 ======================
 See license.txt for license information.
 

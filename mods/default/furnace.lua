@@ -50,19 +50,19 @@ end
 --
 
 local function can_dig(pos, player)
-	local meta = minetest.get_meta(pos);
+	local meta = MultiCraft.get_meta(pos);
 	local inv = meta:get_inventory()
 	return inv:is_empty("fuel") and inv:is_empty("dst") and inv:is_empty("src")
 end
 
 local function allow_metadata_inventory_put(pos, listname, index, stack, player)
-	if minetest.is_protected(pos, player:get_player_name()) then
+	if MultiCraft.is_protected(pos, player:get_player_name()) then
 		return 0
 	end
-	local meta = minetest.get_meta(pos)
+	local meta = MultiCraft.get_meta(pos)
 	local inv = meta:get_inventory()
 	if listname == "fuel" then
-		if minetest.get_craft_result({method="fuel", width=1, items={stack}}).time ~= 0 then
+		if MultiCraft.get_craft_result({method="fuel", width=1, items={stack}}).time ~= 0 then
 			if inv:is_empty("src") then
 				meta:set_string("infotext", S("Furnace is empty"))
 			end
@@ -78,33 +78,33 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 end
 
 local function allow_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
-	local meta = minetest.get_meta(pos)
+	local meta = MultiCraft.get_meta(pos)
 	local inv = meta:get_inventory()
 	local stack = inv:get_stack(from_list, from_index)
 	return allow_metadata_inventory_put(pos, to_list, to_index, stack, player)
 end
 
 local function allow_metadata_inventory_take(pos, listname, index, stack, player)
-	if minetest.is_protected(pos, player:get_player_name()) then
+	if MultiCraft.is_protected(pos, player:get_player_name()) then
 		return 0
 	end
 	return stack:get_count()
 end
 
 local function swap_node(pos, name)
-	local node = minetest.get_node(pos)
+	local node = MultiCraft.get_node(pos)
 	if node.name == name then
 		return
 	end
 	node.name = name
-	minetest.swap_node(pos, node)
+	MultiCraft.swap_node(pos, node)
 end
 
 local function furnace_node_timer(pos, elapsed)
 	--
 	-- Initialize metadata
 	--
-	local meta = minetest.get_meta(pos)
+	local meta = MultiCraft.get_meta(pos)
 	local fuel_time = meta:get_float("fuel_time") or 0
 	local src_time = meta:get_float("src_time") or 0
 	local fuel_totaltime = meta:get_float("fuel_totaltime") or 0
@@ -132,7 +132,7 @@ local function furnace_node_timer(pos, elapsed)
 
 		-- Check if we have cookable content
 		local aftercooked
-		cooked, aftercooked = minetest.get_craft_result({method = "cooking", width = 1, items = srclist})
+		cooked, aftercooked = MultiCraft.get_craft_result({method = "cooking", width = 1, items = srclist})
 		cookable = cooked.time ~= 0
 
 		local el = math.min(elapsed, fuel_totaltime - fuel_time)
@@ -158,7 +158,7 @@ local function furnace_node_timer(pos, elapsed)
 						dst_full = true
 					end
 					-- Play cooling sound
-					minetest.sound_play("default_cool_lava",
+					MultiCraft.sound_play("default_cool_lava",
 						{pos = pos, max_hear_distance = 16, gain = 0.1}, true)
 				else
 					-- Item could not be cooked: probably missing fuel
@@ -170,7 +170,7 @@ local function furnace_node_timer(pos, elapsed)
 			if cookable then
 				-- We need to get new fuel
 				local afterfuel
-				fuel, afterfuel = minetest.get_craft_result({method = "fuel", width = 1, items = fuellist})
+				fuel, afterfuel = MultiCraft.get_craft_result({method = "fuel", width = 1, items = fuellist})
 
 				if fuel.time == 0 then
 					-- No valid fuel in fuel list
@@ -178,7 +178,7 @@ local function furnace_node_timer(pos, elapsed)
 					src_time = 0
 				else
 					-- prevent blocking of fuel inventory (for automatization mods)
-					local is_fuel = minetest.get_craft_result({method = "fuel", width = 1, items = {afterfuel.items[1]:to_string()}})
+					local is_fuel = MultiCraft.get_craft_result({method = "fuel", width = 1, items = {afterfuel.items[1]:to_string()}})
 					if is_fuel.time == 0 then
 						table.insert(fuel.replacements, afterfuel.items[1])
 						inv:set_stack("fuel", 1, "")
@@ -192,8 +192,8 @@ local function furnace_node_timer(pos, elapsed)
 						local leftover = inv:add_item("dst", replacements[1])
 						if not leftover:is_empty() then
 							local above = vector.new(pos.x, pos.y + 1, pos.z)
-							local drop_pos = minetest.find_node_near(above, 1, {"air"}) or above
-							minetest.item_drop(replacements[1], nil, drop_pos)
+							local drop_pos = MultiCraft.find_node_near(above, 1, {"air"}) or above
+							MultiCraft.item_drop(replacements[1], nil, drop_pos)
 						end
 					end
 					update = true
@@ -253,7 +253,7 @@ local function furnace_node_timer(pos, elapsed)
 
 		-- Play sound every 5 seconds while the furnace is active
 		if timer_elapsed == 0 or (timer_elapsed+1) % 5 == 0 then
-			minetest.sound_play("default_furnace_active",
+			MultiCraft.sound_play("default_furnace_active",
 				{pos = pos, max_hear_distance = 16, gain = 0.5}, true)
 		end
 	else
@@ -263,7 +263,7 @@ local function furnace_node_timer(pos, elapsed)
 		formspec = default.get_furnace_inactive_formspec()
 		swap_node(pos, "default:furnace")
 		-- stop timer on the inactive furnace
-		minetest.get_node_timer(pos):stop()
+		MultiCraft.get_node_timer(pos):stop()
 		meta:set_int("timer_elapsed", 0)
 	end
 
@@ -292,7 +292,7 @@ end
 -- Node definitions
 --
 
-minetest.register_node("default:furnace", {
+MultiCraft.register_node("default:furnace", {
 	description = S("Furnace"),
 	tiles = {
 		"default_furnace_top.png", "default_furnace_bottom.png",
@@ -310,7 +310,7 @@ minetest.register_node("default:furnace", {
 	on_timer = furnace_node_timer,
 
 	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
+		local meta = MultiCraft.get_meta(pos)
 		local inv = meta:get_inventory()
 		inv:set_size('src', 1)
 		inv:set_size('fuel', 1)
@@ -319,15 +319,15 @@ minetest.register_node("default:furnace", {
 	end,
 
 	on_metadata_inventory_move = function(pos)
-		minetest.get_node_timer(pos):start(1.0)
+		MultiCraft.get_node_timer(pos):start(1.0)
 	end,
 	on_metadata_inventory_put = function(pos)
 		-- start timer function, it will sort out whether furnace can burn or not.
-		minetest.get_node_timer(pos):start(1.0)
+		MultiCraft.get_node_timer(pos):start(1.0)
 	end,
 	on_metadata_inventory_take = function(pos)
 		-- check whether the furnace is empty or not.
-		minetest.get_node_timer(pos):start(1.0)
+		MultiCraft.get_node_timer(pos):start(1.0)
 	end,
 	on_blast = function(pos)
 		local drops = {}
@@ -335,7 +335,7 @@ minetest.register_node("default:furnace", {
 		default.get_inventory_drops(pos, "fuel", drops)
 		default.get_inventory_drops(pos, "dst", drops)
 		drops[#drops+1] = "default:furnace"
-		minetest.remove_node(pos)
+		MultiCraft.remove_node(pos)
 		return drops
 	end,
 
@@ -344,7 +344,7 @@ minetest.register_node("default:furnace", {
 	allow_metadata_inventory_take = allow_metadata_inventory_take,
 })
 
-minetest.register_node("default:furnace_active", {
+MultiCraft.register_node("default:furnace_active", {
 	description = S("Furnace"),
 	tiles = {
 		"default_furnace_top.png", "default_furnace_bottom.png",
@@ -377,7 +377,7 @@ minetest.register_node("default:furnace_active", {
 	allow_metadata_inventory_take = allow_metadata_inventory_take,
 })
 
-minetest.register_craft({
+MultiCraft.register_craft({
 	output = "default:furnace",
 	recipe = {
 		{"group:stone", "group:stone", "group:stone"},

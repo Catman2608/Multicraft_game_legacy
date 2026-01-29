@@ -1,4 +1,4 @@
-Minetest Game mod: spawn
+MultiCraft Game mod: spawn
 ========================
 See license.txt for license information.
 

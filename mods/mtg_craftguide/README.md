@@ -1,10 +1,10 @@
-Minetest Game mod: mtg_craftguide
+MultiCraft Game mod: mtg_craftguide
 =================================
 
 Adds a "Recipes" tab to the inventory. Click an item to see it's recipes.
 Click again to show usages.
 
-Based on [craftguide](https://github.com/minetest-mods/craftguide).
+Based on [craftguide](https://github.com/MultiCraft-mods/craftguide).
 
 Authors of media
 ----------------

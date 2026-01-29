@@ -1,15 +1,15 @@
 -- boats/init.lua
 
 -- Load support for MT game translation.
-local S = minetest.get_translator("boats")
+local S = MultiCraft.get_translator("boats")
 
 --
 -- Helper functions
 --
 
 local function is_water(pos)
-	local nn = minetest.get_node(pos).name
-	return minetest.get_item_group(nn, "water") ~= 0
+	local nn = MultiCraft.get_node(pos).name
+	return MultiCraft.get_item_group(nn, "water") ~= 0
 end
 
 
@@ -59,7 +59,7 @@ function boat.on_rightclick(self, clicker)
 		player_api.set_animation(clicker, "stand", 30)
 		local pos = clicker:get_pos()
 		pos = {x = pos.x, y = pos.y + 0.2, z = pos.z}
-		minetest.after(0.1, function()
+		MultiCraft.after(0.1, function()
 			clicker:set_pos(pos)
 		end)
 	elseif not self.driver then
@@ -69,7 +69,7 @@ function boat.on_rightclick(self, clicker)
 		self.driver = name
 		player_api.player_attached[name] = true
 
-		minetest.after(0.2, function()
+		MultiCraft.after(0.2, function()
 			player_api.set_animation(clicker, "sit", 30)
 		end)
 		clicker:set_look_horizontal(self.object:get_yaw())
@@ -116,16 +116,16 @@ function boat.on_punch(self, puncher)
 	if not self.driver then
 		self.removed = true
 		local inv = puncher:get_inventory()
-		if not minetest.is_creative_enabled(name)
+		if not MultiCraft.is_creative_enabled(name)
 				or not inv:contains_item("main", "boats:boat") then
 			local leftover = inv:add_item("main", "boats:boat")
 			-- if no room in inventory add a replacement boat to the world
 			if not leftover:is_empty() then
-				minetest.add_item(self.object:get_pos(), leftover)
+				MultiCraft.add_item(self.object:get_pos(), leftover)
 			end
 		end
 		-- delay remove to ensure player is detached
-		minetest.after(0.1, function()
+		MultiCraft.after(0.1, function()
 			self.object:remove()
 		end)
 	end
@@ -135,19 +135,19 @@ end
 function boat.on_step(self, dtime)
 	self.v = get_v(self.object:get_velocity()) * math.sign(self.v)
 	if self.driver then
-		local driver_objref = minetest.get_player_by_name(self.driver)
+		local driver_objref = MultiCraft.get_player_by_name(self.driver)
 		if driver_objref then
 			local ctrl = driver_objref:get_player_control()
 			if ctrl.up and ctrl.down then
 				if not self.auto then
 					self.auto = true
-					minetest.chat_send_player(self.driver, S("Boat cruise mode on"))
+					MultiCraft.chat_send_player(self.driver, S("Boat cruise mode on"))
 				end
 			elseif ctrl.down then
 				self.v = self.v - dtime * 2.0
 				if self.auto then
 					self.auto = false
-					minetest.chat_send_player(self.driver, S("Boat cruise mode off"))
+					MultiCraft.chat_send_player(self.driver, S("Boat cruise mode off"))
 				end
 			elseif ctrl.up or self.auto then
 				self.v = self.v + dtime * 2.0
@@ -188,7 +188,7 @@ function boat.on_step(self, dtime)
 	local new_velo
 	local new_acce = {x = 0, y = 0, z = 0}
 	if not is_water(p) then
-		local nodedef = minetest.registered_nodes[minetest.get_node(p).name]
+		local nodedef = MultiCraft.registered_nodes[MultiCraft.get_node(p).name]
 		if (not nodedef) or nodedef.walkable then
 			self.v = 0
 			new_acce = {x = 0, y = 1, z = 0}
@@ -230,10 +230,10 @@ function boat.on_step(self, dtime)
 end
 
 
-minetest.register_entity("boats:boat", boat)
+MultiCraft.register_entity("boats:boat", boat)
 
 
-minetest.register_craftitem("boats:boat", {
+MultiCraft.register_craftitem("boats:boat", {
 	description = S("Boat"),
 	inventory_image = "boats_inventory.png",
 	wield_image = "boats_wield.png",
@@ -243,8 +243,8 @@ minetest.register_craftitem("boats:boat", {
 
 	on_place = function(itemstack, placer, pointed_thing)
 		local under = pointed_thing.under
-		local node = minetest.get_node(under)
-		local udef = minetest.registered_nodes[node.name]
+		local node = MultiCraft.get_node(under)
+		local udef = MultiCraft.registered_nodes[node.name]
 		if udef and udef.on_rightclick and
 				not (placer and placer:is_player() and
 				placer:get_player_control().sneak) then
@@ -259,13 +259,13 @@ minetest.register_craftitem("boats:boat", {
 			return itemstack
 		end
 		pointed_thing.under.y = pointed_thing.under.y + 0.5
-		boat = minetest.add_entity(pointed_thing.under, "boats:boat")
+		boat = MultiCraft.add_entity(pointed_thing.under, "boats:boat")
 		if boat then
 			if placer then
 				boat:set_yaw(placer:get_look_horizontal())
 			end
 			local player_name = placer and placer:get_player_name() or ""
-			if not minetest.is_creative_enabled(player_name) then
+			if not MultiCraft.is_creative_enabled(player_name) then
 				itemstack:take_item()
 			end
 		end
@@ -274,7 +274,7 @@ minetest.register_craftitem("boats:boat", {
 })
 
 
-minetest.register_craft({
+MultiCraft.register_craft({
 	output = "boats:boat",
 	recipe = {
 		{"",           "",           ""          },
@@ -283,7 +283,7 @@ minetest.register_craft({
 	},
 })
 
-minetest.register_craft({
+MultiCraft.register_craft({
 	type = "fuel",
 	recipe = "boats:boat",
 	burntime = 20,

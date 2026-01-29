@@ -18,7 +18,7 @@ end
 
 function default.chest.chest_lid_obstructed(pos)
 	local above = {x = pos.x, y = pos.y + 1, z = pos.z}
-	local def = minetest.registered_nodes[minetest.get_node(above).name]
+	local def = MultiCraft.registered_nodes[MultiCraft.get_node(above).name]
 	-- allow ladders, signs, wallmounted things and torches to not obstruct
 	if def and
 			(def.drawtype == "airlike" or
@@ -43,16 +43,16 @@ function default.chest.chest_lid_close(pn)
 		end
 	end
 
-	local node = minetest.get_node(pos)
-	minetest.after(0.2, minetest.swap_node, pos, { name = swap,
+	local node = MultiCraft.get_node(pos)
+	MultiCraft.after(0.2, MultiCraft.swap_node, pos, { name = swap,
 			param2 = node.param2 })
-	minetest.sound_play(sound, {gain = 0.3, pos = pos,
+	MultiCraft.sound_play(sound, {gain = 0.3, pos = pos,
 		max_hear_distance = 10}, true)
 end
 
 default.chest.open_chests = {}
 
-minetest.register_on_player_receive_fields(function(player, formname, fields)
+MultiCraft.register_on_player_receive_fields(function(player, formname, fields)
 	if formname ~= "default:chest" then
 		return
 	end
@@ -69,7 +69,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	return true
 end)
 
-minetest.register_on_leaveplayer(function(player)
+MultiCraft.register_on_leaveplayer(function(player)
 	local pn = player:get_player_name()
 	if default.chest.open_chests[pn] then
 		default.chest.chest_lid_close(pn)
@@ -88,19 +88,19 @@ function default.chest.register_chest(prefixed_name, d)
 
 	if def.protected then
 		def.on_construct = function(pos)
-			local meta = minetest.get_meta(pos)
+			local meta = MultiCraft.get_meta(pos)
 			meta:set_string("infotext", S("Locked Chest"))
 			meta:set_string("owner", "")
 			local inv = meta:get_inventory()
 			inv:set_size("main", 8*4)
 		end
 		def.after_place_node = function(pos, placer)
-			local meta = minetest.get_meta(pos)
+			local meta = MultiCraft.get_meta(pos)
 			meta:set_string("owner", placer:get_player_name() or "")
 			meta:set_string("infotext", S("Locked Chest (owned by @1)", meta:get_string("owner")))
 		end
 		def.can_dig = function(pos,player)
-			local meta = minetest.get_meta(pos);
+			local meta = MultiCraft.get_meta(pos);
 			local inv = meta:get_inventory()
 			return inv:is_empty("main") and
 					default.can_interact_with_node(player, pos)
@@ -129,14 +129,14 @@ function default.chest.register_chest(prefixed_name, d)
 				return itemstack
 			end
 
-			minetest.sound_play(def.sound_open, {gain = 0.3,
+			MultiCraft.sound_play(def.sound_open, {gain = 0.3,
 					pos = pos, max_hear_distance = 10}, true)
 			if not default.chest.chest_lid_obstructed(pos) then
-				minetest.swap_node(pos,
+				MultiCraft.swap_node(pos,
 						{ name = name .. "_open",
 						param2 = node.param2 })
 			end
-			minetest.after(0.2, minetest.show_formspec,
+			MultiCraft.after(0.2, MultiCraft.show_formspec,
 					clicker:get_player_name(),
 					"default:chest", default.chest.get_chest_formspec(pos))
 			default.chest.open_chests[clicker:get_player_name()] = { pos = pos,
@@ -144,7 +144,7 @@ function default.chest.register_chest(prefixed_name, d)
 		end
 		def.on_blast = function() end
 		def.on_key_use = function(pos, player)
-			local secret = minetest.get_meta(pos):get_string("key_lock_secret")
+			local secret = MultiCraft.get_meta(pos):get_string("key_lock_secret")
 			local itemstack = player:get_wielded_item()
 			local key_meta = itemstack:get_meta()
 
@@ -153,7 +153,7 @@ function default.chest.register_chest(prefixed_name, d)
 			end
 
 			if key_meta:get_string("secret") == "" then
-				key_meta:set_string("secret", minetest.parse_json(itemstack:get_metadata()).secret)
+				key_meta:set_string("secret", MultiCraft.parse_json(itemstack:get_metadata()).secret)
 				itemstack:set_metadata("")
 			end
 
@@ -161,21 +161,21 @@ function default.chest.register_chest(prefixed_name, d)
 				return
 			end
 
-			minetest.show_formspec(
+			MultiCraft.show_formspec(
 				player:get_player_name(),
 				"default:chest_locked",
 				default.chest.get_chest_formspec(pos)
 			)
 		end
 		def.on_skeleton_key_use = function(pos, player, newsecret)
-			local meta = minetest.get_meta(pos)
+			local meta = MultiCraft.get_meta(pos)
 			local owner = meta:get_string("owner")
 			local pn = player:get_player_name()
 
 			-- verify placer is owner of lockable chest
 			if owner ~= pn then
-				minetest.record_protection_violation(pos, pn)
-				minetest.chat_send_player(pn, S("You do not own this chest."))
+				MultiCraft.record_protection_violation(pos, pn)
+				MultiCraft.chat_send_player(pn, S("You do not own this chest."))
 				return nil
 			end
 
@@ -189,25 +189,25 @@ function default.chest.register_chest(prefixed_name, d)
 		end
 	else
 		def.on_construct = function(pos)
-			local meta = minetest.get_meta(pos)
+			local meta = MultiCraft.get_meta(pos)
 			meta:set_string("infotext", S("Chest"))
 			local inv = meta:get_inventory()
 			inv:set_size("main", 8*4)
 		end
 		def.can_dig = function(pos,player)
-			local meta = minetest.get_meta(pos);
+			local meta = MultiCraft.get_meta(pos);
 			local inv = meta:get_inventory()
 			return inv:is_empty("main")
 		end
 		def.on_rightclick = function(pos, node, clicker)
-			minetest.sound_play(def.sound_open, {gain = 0.3, pos = pos,
+			MultiCraft.sound_play(def.sound_open, {gain = 0.3, pos = pos,
 					max_hear_distance = 10}, true)
 			if not default.chest.chest_lid_obstructed(pos) then
-				minetest.swap_node(pos, {
+				MultiCraft.swap_node(pos, {
 						name = name .. "_open",
 						param2 = node.param2 })
 			end
-			minetest.after(0.2, minetest.show_formspec,
+			MultiCraft.after(0.2, MultiCraft.show_formspec,
 					clicker:get_player_name(),
 					"default:chest", default.chest.get_chest_formspec(pos))
 			default.chest.open_chests[clicker:get_player_name()] = { pos = pos,
@@ -217,25 +217,25 @@ function default.chest.register_chest(prefixed_name, d)
 			local drops = {}
 			default.get_inventory_drops(pos, "main", drops)
 			drops[#drops+1] = name
-			minetest.remove_node(pos)
+			MultiCraft.remove_node(pos)
 			return drops
 		end
 	end
 
 	def.on_metadata_inventory_move = function(pos, from_list, from_index,
 			to_list, to_index, count, player)
-		minetest.log("action", player:get_player_name() ..
-			" moves stuff in chest at " .. minetest.pos_to_string(pos))
+		MultiCraft.log("action", player:get_player_name() ..
+			" moves stuff in chest at " .. MultiCraft.pos_to_string(pos))
 	end
 	def.on_metadata_inventory_put = function(pos, listname, index, stack, player)
-		minetest.log("action", player:get_player_name() ..
+		MultiCraft.log("action", player:get_player_name() ..
 			" moves " .. stack:get_name() ..
-			" to chest at " .. minetest.pos_to_string(pos))
+			" to chest at " .. MultiCraft.pos_to_string(pos))
 	end
 	def.on_metadata_inventory_take = function(pos, listname, index, stack, player)
-		minetest.log("action", player:get_player_name() ..
+		MultiCraft.log("action", player:get_player_name() ..
 			" takes " .. stack:get_name() ..
-			" from chest at " .. minetest.pos_to_string(pos))
+			" from chest at " .. MultiCraft.pos_to_string(pos))
 	end
 
 	local def_opened = table.copy(def)
@@ -266,17 +266,17 @@ function default.chest.register_chest(prefixed_name, d)
 	def_closed.tiles[5] = def.tiles[3] -- drawtype to make them match the mesh
 	def_closed.tiles[3] = def.tiles[3].."^[transformFX"
 
-	minetest.register_node(prefixed_name, def_closed)
-	minetest.register_node(prefixed_name .. "_open", def_opened)
+	MultiCraft.register_node(prefixed_name, def_closed)
+	MultiCraft.register_node(prefixed_name .. "_open", def_opened)
 
 	-- convert old chests to this new variant
 	if name == "default:chest" or name == "default:chest_locked" then
-		minetest.register_lbm({
+		MultiCraft.register_lbm({
 			label = "update chests to opening chests",
 			name = "default:upgrade_" .. name:sub(9,-1) .. "_v2",
 			nodenames = {name},
 			action = function(pos, node)
-				local meta = minetest.get_meta(pos)
+				local meta = MultiCraft.get_meta(pos)
 				meta:set_string("formspec", nil)
 				local inv = meta:get_inventory()
 				local list = inv:get_list("default:chest")
@@ -323,7 +323,7 @@ default.chest.register_chest("default:chest_locked", {
 	protected = true,
 })
 
-minetest.register_craft({
+MultiCraft.register_craft({
 	output = "default:chest",
 	recipe = {
 		{"group:wood", "group:wood", "group:wood"},
@@ -332,7 +332,7 @@ minetest.register_craft({
 	}
 })
 
-minetest.register_craft({
+MultiCraft.register_craft({
 	output = "default:chest_locked",
 	recipe = {
 		{"group:wood", "group:wood", "group:wood"},
@@ -341,19 +341,19 @@ minetest.register_craft({
 	}
 })
 
-minetest.register_craft( {
+MultiCraft.register_craft( {
 	type = "shapeless",
 	output = "default:chest_locked",
 	recipe = {"default:chest", "default:steel_ingot"},
 })
 
-minetest.register_craft({
+MultiCraft.register_craft({
 	type = "fuel",
 	recipe = "default:chest",
 	burntime = 30,
 })
 
-minetest.register_craft({
+MultiCraft.register_craft({
 	type = "fuel",
 	recipe = "default:chest_locked",
 	burntime = 30,
