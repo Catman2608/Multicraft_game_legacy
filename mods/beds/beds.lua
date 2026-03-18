@@ -91,18 +91,18 @@ beds.register_bed("beds:bed", {
 
 -- Aliases for PilzAdam's beds mod
 
-MultiCraft.register_alias("beds:bed_bottom_red", "beds:bed_bottom")
-MultiCraft.register_alias("beds:bed_top_red", "beds:bed_top")
+minetest.register_alias("beds:bed_bottom_red", "beds:bed_bottom")
+minetest.register_alias("beds:bed_top_red", "beds:bed_top")
 
 -- Fuel
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	type = "fuel",
 	recipe = "beds:fancy_bed_bottom",
 	burntime = 13,
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	type = "fuel",
 	recipe = "beds:bed_bottom",
 	burntime = 12,

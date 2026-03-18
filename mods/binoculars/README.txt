@@ -1,4 +1,4 @@
-MultiCraft Game mod: binoculars
+Minetest Game mod: binoculars
 =============================
 See license.txt for license information.
 

@@ -1,11 +1,11 @@
-MultiCraft Game mod: default
+Minetest Game mod: default
 ==========================
 See license.txt for license information.
 
 Authors of source code
 ----------------------
 Originally by celeron55, Perttu Ahola <celeron55@gmail.com> (LGPLv2.1+)
-Various MultiCraft developers and contributors (LGPLv2.1+)
+Various Minetest developers and contributors (LGPLv2.1+)
 
 The torch code was derived by sofar from the 'torches' mod by
 BlockMen (LGPLv2.1+)

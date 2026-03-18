@@ -1,10 +1,10 @@
 -- carts/init.lua
 
 -- Load support for MT game translation.
-local S = MultiCraft.get_translator("carts")
+local S = minetest.get_translator("carts")
 
 carts = {}
-carts.modpath = MultiCraft.get_modpath("carts")
+carts.modpath = minetest.get_modpath("carts")
 carts.railparams = {}
 carts.get_translator = S
 
@@ -21,7 +21,7 @@ dofile(carts.modpath.."/rails.lua")
 dofile(carts.modpath.."/cart_entity.lua")
 
 -- Register rails as dungeon loot
-if MultiCraft.global_exists("dungeon_loot") then
+if minetest.global_exists("dungeon_loot") then
 	dungeon_loot.register({
 		name = "carts:rail", chance = 0.35, count = {1, 6}
 	})

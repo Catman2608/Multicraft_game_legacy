@@ -1,4 +1,4 @@
--- MultiCraft 0.4 mod: player
+-- Minetest 0.4 mod: player
 -- See README.txt for licensing and other information.
 
 player_api = {}
@@ -85,7 +85,7 @@ function player_api.set_animation(player, anim_name, speed)
 	player:set_animation(anim, speed or model.animation_speed, animation_blend)
 end
 
-MultiCraft.register_on_leaveplayer(function(player)
+minetest.register_on_leaveplayer(function(player)
 	local name = player:get_player_name()
 	player_model[name] = nil
 	player_anim[name] = nil
@@ -99,8 +99,8 @@ local player_set_animation = player_api.set_animation
 local player_attached = player_api.player_attached
 
 -- Prevent knockback for attached players
-local old_calculate_knockback = MultiCraft.calculate_knockback
-function MultiCraft.calculate_knockback(player, ...)
+local old_calculate_knockback = minetest.calculate_knockback
+function minetest.calculate_knockback(player, ...)
 	if player_attached[player:get_player_name()] then
 		return 0
 	end
@@ -108,8 +108,8 @@ function MultiCraft.calculate_knockback(player, ...)
 end
 
 -- Check each player and apply animations
-MultiCraft.register_globalstep(function()
-	for _, player in pairs(MultiCraft.get_connected_players()) do
+minetest.register_globalstep(function()
+	for _, player in pairs(minetest.get_connected_players()) do
 		local name = player:get_player_name()
 		local model_name = player_model[name]
 		local model = model_name and models[model_name]

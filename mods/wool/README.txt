@@ -1,11 +1,11 @@
-MultiCraft Game mod: wool
+Minetest Game mod: wool
 =======================
 See license.txt for license information.
 
 Authors of source code
 ----------------------
 Originally by Perttu Ahola (celeron55) <celeron55@gmail.com> (MIT)
-Various MultiCraft developers and contributors (MIT)
+Various Minetest developers and contributors (MIT)
 
 Authors of media (textures)
 ---------------------------

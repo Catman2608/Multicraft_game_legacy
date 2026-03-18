@@ -1,4 +1,4 @@
-MultiCraft Game mod: player_api
+Minetest Game mod: player_api
 =============================
 See license.txt for license information.
 
@@ -9,7 +9,7 @@ This mod is only for content related to the Player API and the player object.
 Authors of source code
 ----------------------
 Originally by celeron55, Perttu Ahola <celeron55@gmail.com> (LGPLv2.1+)
-Various MultiCraft developers and contributors (LGPLv2.1+)
+Various Minetest developers and contributors (LGPLv2.1+)
 
 Authors of media (textures, models and sounds)
 ----------------------------------------------

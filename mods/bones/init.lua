@@ -1,16 +1,16 @@
 -- bones/init.lua
 
--- MultiCraft 0.4 mod: bones
+-- Minetest 0.4 mod: bones
 -- See README.txt for licensing and other information.
 
 -- Load support for MT game translation.
-local S = MultiCraft.get_translator("bones")
+local S = minetest.get_translator("bones")
 
 bones = {}
 
 local function is_owner(pos, name)
-	local owner = MultiCraft.get_meta(pos):get_string("owner")
-	if owner == "" or owner == name or MultiCraft.check_player_privs(name, "protection_bypass") then
+	local owner = minetest.get_meta(pos):get_string("owner")
+	if owner == "" or owner == name or minetest.check_player_privs(name, "protection_bypass") then
 		return true
 	end
 	return false
@@ -25,10 +25,10 @@ local bones_formspec =
 	"listring[current_player;main]" ..
 	default.get_hotbar_bg(0,4.85)
 
-local share_bones_time = tonumber(MultiCraft.settings:get("share_bones_time")) or 1200
-local share_bones_time_early = tonumber(MultiCraft.settings:get("share_bones_time_early")) or share_bones_time / 4
+local share_bones_time = tonumber(minetest.settings:get("share_bones_time")) or 1200
+local share_bones_time_early = tonumber(minetest.settings:get("share_bones_time_early")) or share_bones_time / 4
 
-MultiCraft.register_node("bones:bones", {
+minetest.register_node("bones:bones", {
 	description = S("Bones"),
 	tiles = {
 		"bones_top.png^[transform2",
@@ -43,7 +43,7 @@ MultiCraft.register_node("bones:bones", {
 	sounds = default.node_sound_gravel_defaults(),
 
 	can_dig = function(pos, player)
-		local inv = MultiCraft.get_meta(pos):get_inventory()
+		local inv = minetest.get_meta(pos):get_inventory()
 		local name = ""
 		if player then
 			name = player:get_player_name()
@@ -70,15 +70,15 @@ MultiCraft.register_node("bones:bones", {
 	end,
 
 	on_metadata_inventory_take = function(pos, listname, index, stack, player)
-		local meta = MultiCraft.get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		if meta:get_inventory():is_empty("main") then
 			local inv = player:get_inventory()
 			if inv:room_for_item("main", {name = "bones:bones"}) then
 				inv:add_item("main", {name = "bones:bones"})
 			else
-				MultiCraft.add_item(pos, "bones:bones")
+				minetest.add_item(pos, "bones:bones")
 			end
-			MultiCraft.remove_node(pos)
+			minetest.remove_node(pos)
 		end
 	end,
 
@@ -87,11 +87,11 @@ MultiCraft.register_node("bones:bones", {
 			return
 		end
 
-		if MultiCraft.get_meta(pos):get_string("infotext") == "" then
+		if minetest.get_meta(pos):get_string("infotext") == "" then
 			return
 		end
 
-		local inv = MultiCraft.get_meta(pos):get_inventory()
+		local inv = minetest.get_meta(pos):get_inventory()
 		local player_inv = player:get_inventory()
 		local has_space = true
 
@@ -111,14 +111,14 @@ MultiCraft.register_node("bones:bones", {
 			if player_inv:room_for_item("main", {name = "bones:bones"}) then
 				player_inv:add_item("main", {name = "bones:bones"})
 			else
-				MultiCraft.add_item(pos,"bones:bones")
+				minetest.add_item(pos,"bones:bones")
 			end
-			MultiCraft.remove_node(pos)
+			minetest.remove_node(pos)
 		end
 	end,
 
 	on_timer = function(pos, elapsed)
-		local meta = MultiCraft.get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local time = meta:get_int("time") + elapsed
 		if time >= share_bones_time then
 			meta:set_string("infotext", S("@1's old bones", meta:get_string("owner")))
@@ -133,8 +133,8 @@ MultiCraft.register_node("bones:bones", {
 })
 
 local function may_replace(pos, player)
-	local node_name = MultiCraft.get_node(pos).name
-	local node_definition = MultiCraft.registered_nodes[node_name]
+	local node_name = minetest.get_node(pos).name
+	local node_definition = minetest.registered_nodes[node_name]
 
 	-- if the node is unknown, we return false
 	if not node_definition then
@@ -147,7 +147,7 @@ local function may_replace(pos, player)
 	end
 
 	-- don't replace nodes inside protections
-	if MultiCraft.is_protected(pos, player:get_player_name()) then
+	if minetest.is_protected(pos, player:get_player_name()) then
 		return false
 	end
 
@@ -168,7 +168,7 @@ local function may_replace(pos, player)
 end
 
 local drop = function(pos, itemstack)
-	local obj = MultiCraft.add_item(pos, itemstack:take_item(itemstack:get_count()))
+	local obj = minetest.add_item(pos, itemstack:take_item(itemstack:get_count()))
 	if obj then
 		obj:set_velocity({
 			x = math.random(-10, 10) / 9,
@@ -190,41 +190,41 @@ local function is_all_empty(player_inv)
 	return true
 end
 
-MultiCraft.register_on_dieplayer(function(player)
-	local bones_mode = MultiCraft.settings:get("bones_mode") or "bones"
+minetest.register_on_dieplayer(function(player)
+	local bones_mode = minetest.settings:get("bones_mode") or "bones"
 	if bones_mode ~= "bones" and bones_mode ~= "drop" and bones_mode ~= "keep" then
 		bones_mode = "bones"
 	end
 
-	local bones_position_message = MultiCraft.settings:get_bool("bones_position_message") == true
+	local bones_position_message = minetest.settings:get_bool("bones_position_message") == true
 	local player_name = player:get_player_name()
 	local pos = vector.round(player:get_pos())
-	local pos_string = MultiCraft.pos_to_string(pos)
+	local pos_string = minetest.pos_to_string(pos)
 
 	-- return if keep inventory set or in creative mode
-	if bones_mode == "keep" or MultiCraft.is_creative_enabled(player_name) then
-		MultiCraft.log("action", player_name .. " dies at " .. pos_string ..
+	if bones_mode == "keep" or minetest.is_creative_enabled(player_name) then
+		minetest.log("action", player_name .. " dies at " .. pos_string ..
 			". No bones placed")
 		if bones_position_message then
-			MultiCraft.chat_send_player(player_name, S("@1 died at @2.", player_name, pos_string))
+			minetest.chat_send_player(player_name, S("@1 died at @2.", player_name, pos_string))
 		end
 		return
 	end
 
 	local player_inv = player:get_inventory()
 	if is_all_empty(player_inv) then
-		MultiCraft.log("action", player_name .. " dies at " .. pos_string ..
+		minetest.log("action", player_name .. " dies at " .. pos_string ..
 			". No bones placed")
 		if bones_position_message then
-			MultiCraft.chat_send_player(player_name, S("@1 died at @2.", player_name, pos_string))
+			minetest.chat_send_player(player_name, S("@1 died at @2.", player_name, pos_string))
 		end
 		return
 	end
 
 	-- check if it's possible to place bones, if not find space near player
 	if bones_mode == "bones" and not may_replace(pos, player) then
-		local air = MultiCraft.find_node_near(pos, 1, {"air"})
-		if air and not MultiCraft.is_protected(air, player_name) then
+		local air = minetest.find_node_near(pos, 1, {"air"})
+		if air and not minetest.is_protected(air, player_name) then
 			pos = air
 		else
 			bones_mode = "drop"
@@ -239,24 +239,24 @@ MultiCraft.register_on_dieplayer(function(player)
 			player_inv:set_list(list_name, {})
 		end
 		drop(pos, ItemStack("bones:bones"))
-		MultiCraft.log("action", player_name .. " dies at " .. pos_string ..
+		minetest.log("action", player_name .. " dies at " .. pos_string ..
 			". Inventory dropped")
 		if bones_position_message then
-			MultiCraft.chat_send_player(player_name, S("@1 died at @2, and dropped their inventory.", player_name, pos_string))
+			minetest.chat_send_player(player_name, S("@1 died at @2, and dropped their inventory.", player_name, pos_string))
 		end
 		return
 	end
 
-	local param2 = MultiCraft.dir_to_facedir(player:get_look_dir())
-	MultiCraft.set_node(pos, {name = "bones:bones", param2 = param2})
+	local param2 = minetest.dir_to_facedir(player:get_look_dir())
+	minetest.set_node(pos, {name = "bones:bones", param2 = param2})
 
-	MultiCraft.log("action", player_name .. " dies at " .. pos_string ..
+	minetest.log("action", player_name .. " dies at " .. pos_string ..
 		". Bones placed")
 	if bones_position_message then
-		MultiCraft.chat_send_player(player_name, S("@1 died at @2, and bones were placed.", player_name, pos_string))
+		minetest.chat_send_player(player_name, S("@1 died at @2, and bones were placed.", player_name, pos_string))
 	end
 
-	local meta = MultiCraft.get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	inv:set_size("main", 8 * 4)
 
@@ -278,13 +278,13 @@ MultiCraft.register_on_dieplayer(function(player)
 	if share_bones_time ~= 0 then
 		meta:set_string("infotext", S("@1's fresh bones", player_name))
 
-		if share_bones_time_early == 0 or not MultiCraft.is_protected(pos, player_name) then
+		if share_bones_time_early == 0 or not minetest.is_protected(pos, player_name) then
 			meta:set_int("time", 0)
 		else
 			meta:set_int("time", (share_bones_time - share_bones_time_early))
 		end
 
-		MultiCraft.get_node_timer(pos):start(10)
+		minetest.get_node_timer(pos):start(10)
 	else
 		meta:set_string("infotext", S("@1's bones", player_name))
 	end

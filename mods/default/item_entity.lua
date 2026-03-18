@@ -1,13 +1,13 @@
 -- mods/default/item_entity.lua
 
-local builtin_item = MultiCraft.registered_entities["__builtin:item"]
+local builtin_item = minetest.registered_entities["__builtin:item"]
 
 local item = {
 	set_item = function(self, itemstring)
 		builtin_item.set_item(self, itemstring)
 
 		local stack = ItemStack(itemstring)
-		local itemdef = MultiCraft.registered_items[stack:get_name()]
+		local itemdef = minetest.registered_items[stack:get_name()]
 		if itemdef and itemdef.groups.flammable ~= 0 then
 			self.flammable = itemdef.groups.flammable
 		end
@@ -17,11 +17,11 @@ local item = {
 		-- disappear in a smoke puff
 		local p = self.object:get_pos()
 		self.object:remove()
-		MultiCraft.sound_play("default_item_smoke", {
+		minetest.sound_play("default_item_smoke", {
 			pos = p,
 			max_hear_distance = 8,
 		}, true)
-		MultiCraft.add_particlespawner({
+		minetest.add_particlespawner({
 			amount = 3,
 			time = 0.1,
 			minpos = {x = p.x - 0.1, y = p.y + 0.1, z = p.z - 0.1 },
@@ -52,18 +52,18 @@ local item = {
 				if pos == nil then
 					return -- object already deleted
 				end
-				local node = MultiCraft.get_node_or_nil(pos)
+				local node = minetest.get_node_or_nil(pos)
 				if not node then
 					return
 				end
 
 				-- Immediately burn up flammable items in lava
-				if MultiCraft.get_item_group(node.name, "lava") > 0 then
+				if minetest.get_item_group(node.name, "lava") > 0 then
 					self:burn_up()
 				else
 					--  otherwise there'll be a chance based on its igniter value
 					local burn_chance = self.flammable
-						* MultiCraft.get_item_group(node.name, "igniter")
+						* minetest.get_item_group(node.name, "igniter")
 					if burn_chance > 0 and math.random(0, burn_chance) ~= 0 then
 						self:burn_up()
 					end
@@ -75,4 +75,4 @@ local item = {
 
 -- set defined item as new __builtin:item, with the old one as fallback table
 setmetatable(item, { __index = builtin_item })
-MultiCraft.register_entity(":__builtin:item", item)
+minetest.register_entity(":__builtin:item", item)

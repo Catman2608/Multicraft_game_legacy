@@ -14,7 +14,7 @@ carts:register_rail("carts:rail", {
 	groups = carts:get_rail_groups(),
 }, {})
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "carts:rail 18",
 	recipe = {
 		{"default:steel_ingot", "group:wood", "default:steel_ingot"},
@@ -23,7 +23,7 @@ MultiCraft.register_craft({
 	}
 })
 
-MultiCraft.register_alias("default:rail", "carts:rail")
+minetest.register_alias("default:rail", "carts:rail")
 
 
 carts:register_rail("carts:powerrail", {
@@ -35,7 +35,7 @@ carts:register_rail("carts:powerrail", {
 	groups = carts:get_rail_groups(),
 }, {acceleration = 5})
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "carts:powerrail 18",
 	recipe = {
 		{"default:steel_ingot", "group:wood", "default:steel_ingot"},
@@ -54,7 +54,7 @@ carts:register_rail("carts:brakerail", {
 	groups = carts:get_rail_groups(),
 }, {acceleration = -3})
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "carts:brakerail 18",
 	recipe = {
 		{"default:steel_ingot", "group:wood", "default:steel_ingot"},

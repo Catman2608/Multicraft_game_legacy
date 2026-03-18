@@ -1,6 +1,6 @@
 -- player/init.lua
 
-dofile(MultiCraft.get_modpath("player_api") .. "/api.lua")
+dofile(minetest.get_modpath("player_api") .. "/api.lua")
 
 -- Default player appearance
 player_api.register_model("character.b3d", {
@@ -21,7 +21,7 @@ player_api.register_model("character.b3d", {
 })
 
 -- Update appearance when the player joins
-MultiCraft.register_on_joinplayer(function(player)
+minetest.register_on_joinplayer(function(player)
 	player_api.player_attached[player:get_player_name()] = false
 	player_api.set_model(player, "character.b3d")
 	player:set_local_animation(

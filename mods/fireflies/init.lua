@@ -1,10 +1,10 @@
 -- firefly/init.lua
 
 -- Load support for MT game translation.
-local S = MultiCraft.get_translator("fireflies")
+local S = minetest.get_translator("fireflies")
 
 
-MultiCraft.register_node("fireflies:firefly", {
+minetest.register_node("fireflies:firefly", {
 	description = S("Firefly"),
 	drawtype = "plantlike",
 	tiles = {{
@@ -34,24 +34,24 @@ MultiCraft.register_node("fireflies:firefly", {
 		local player_name = placer:get_player_name()
 		local pos = pointed_thing.above
 
-		if not MultiCraft.is_protected(pos, player_name) and
-				not MultiCraft.is_protected(pointed_thing.under, player_name) and
-				MultiCraft.get_node(pos).name == "air" then
-			MultiCraft.set_node(pos, {name = "fireflies:firefly"})
-			MultiCraft.get_node_timer(pos):start(1)
+		if not minetest.is_protected(pos, player_name) and
+				not minetest.is_protected(pointed_thing.under, player_name) and
+				minetest.get_node(pos).name == "air" then
+			minetest.set_node(pos, {name = "fireflies:firefly"})
+			minetest.get_node_timer(pos):start(1)
 			itemstack:take_item()
 		end
 		return itemstack
 	end,
 	on_timer = function(pos, elapsed)
-		if MultiCraft.get_node_light(pos) > 11 then
-			MultiCraft.set_node(pos, {name = "fireflies:hidden_firefly"})
+		if minetest.get_node_light(pos) > 11 then
+			minetest.set_node(pos, {name = "fireflies:hidden_firefly"})
 		end
-		MultiCraft.get_node_timer(pos):start(30)
+		minetest.get_node_timer(pos):start(30)
 	end
 })
 
-MultiCraft.register_node("fireflies:hidden_firefly", {
+minetest.register_node("fireflies:hidden_firefly", {
 	description = S("Hidden Firefly"),
 	drawtype = "airlike",
 	inventory_image = "fireflies_firefly.png^default_invisible_node_overlay.png",
@@ -69,52 +69,52 @@ MultiCraft.register_node("fireflies:hidden_firefly", {
 		local player_name = placer:get_player_name()
 		local pos = pointed_thing.above
 
-		if not MultiCraft.is_protected(pos, player_name) and
-				not MultiCraft.is_protected(pointed_thing.under, player_name) and
-				MultiCraft.get_node(pos).name == "air" then
-			MultiCraft.set_node(pos, {name = "fireflies:hidden_firefly"})
-			MultiCraft.get_node_timer(pos):start(1)
+		if not minetest.is_protected(pos, player_name) and
+				not minetest.is_protected(pointed_thing.under, player_name) and
+				minetest.get_node(pos).name == "air" then
+			minetest.set_node(pos, {name = "fireflies:hidden_firefly"})
+			minetest.get_node_timer(pos):start(1)
 			itemstack:take_item()
 		end
 		return itemstack
 	end,
 	on_timer = function(pos, elapsed)
-		if MultiCraft.get_node_light(pos) <= 11 then
-			MultiCraft.set_node(pos, {name = "fireflies:firefly"})
+		if minetest.get_node_light(pos) <= 11 then
+			minetest.set_node(pos, {name = "fireflies:firefly"})
 		end
-		MultiCraft.get_node_timer(pos):start(30)
+		minetest.get_node_timer(pos):start(30)
 	end
 })
 
 
 -- bug net
-MultiCraft.register_tool("fireflies:bug_net", {
+minetest.register_tool("fireflies:bug_net", {
 	description = S("Bug Net"),
 	inventory_image = "fireflies_bugnet.png",
 	on_use = function(itemstack, player, pointed_thing)
 		local player_name = player and player:get_player_name() or ""
 		if not pointed_thing or pointed_thing.type ~= "node" or
-				MultiCraft.is_protected(pointed_thing.under, player_name) then
+				minetest.is_protected(pointed_thing.under, player_name) then
 			return
 		end
-		local node_name = MultiCraft.get_node(pointed_thing.under).name
+		local node_name = minetest.get_node(pointed_thing.under).name
 		local inv = player:get_inventory()
-		if MultiCraft.get_item_group(node_name, "catchable") == 1 then
-			MultiCraft.set_node(pointed_thing.under, {name = "air"})
+		if minetest.get_item_group(node_name, "catchable") == 1 then
+			minetest.set_node(pointed_thing.under, {name = "air"})
 			local stack = ItemStack(node_name.." 1")
 			local leftover = inv:add_item("main", stack)
 			if leftover:get_count() > 0 then
-				MultiCraft.add_item(pointed_thing.under, node_name.." 1")
+				minetest.add_item(pointed_thing.under, node_name.." 1")
 			end
 		end
-		if not MultiCraft.is_creative_enabled(player_name) then
+		if not minetest.is_creative_enabled(player_name) then
 			itemstack:add_wear(256)
 			return itemstack
 		end
 	end
 })
 
-MultiCraft.register_craft( {
+minetest.register_craft( {
 	output = "fireflies:bug_net",
 	recipe = {
 		{"farming:string", "farming:string"},
@@ -125,7 +125,7 @@ MultiCraft.register_craft( {
 
 
 -- firefly in a bottle
-MultiCraft.register_node("fireflies:firefly_bottle", {
+minetest.register_node("fireflies:firefly_bottle", {
 	description = S("Firefly in a Bottle"),
 	inventory_image = "fireflies_bottle.png",
 	wield_image = "fireflies_bottle.png",
@@ -151,30 +151,30 @@ MultiCraft.register_node("fireflies:firefly_bottle", {
 	sounds = default.node_sound_glass_defaults(),
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local lower_pos = {x = pos.x, y = pos.y + 1, z = pos.z}
-		if MultiCraft.is_protected(pos, player:get_player_name()) or
-				MultiCraft.get_node(lower_pos).name ~= "air" then
+		if minetest.is_protected(pos, player:get_player_name()) or
+				minetest.get_node(lower_pos).name ~= "air" then
 			return
 		end
 
 		local upper_pos = {x = pos.x, y = pos.y + 2, z = pos.z}
 		local firefly_pos
 
-		if not MultiCraft.is_protected(upper_pos, player:get_player_name()) and
-				MultiCraft.get_node(upper_pos).name == "air" then
+		if not minetest.is_protected(upper_pos, player:get_player_name()) and
+				minetest.get_node(upper_pos).name == "air" then
 			firefly_pos = upper_pos
-		elseif not MultiCraft.is_protected(lower_pos, player:get_player_name()) then
+		elseif not minetest.is_protected(lower_pos, player:get_player_name()) then
 			firefly_pos = lower_pos
 		end
 
 		if firefly_pos then
-			MultiCraft.set_node(pos, {name = "vessels:glass_bottle"})
-			MultiCraft.set_node(firefly_pos, {name = "fireflies:firefly"})
-			MultiCraft.get_node_timer(firefly_pos):start(1)
+			minetest.set_node(pos, {name = "vessels:glass_bottle"})
+			minetest.set_node(firefly_pos, {name = "fireflies:firefly"})
+			minetest.get_node_timer(firefly_pos):start(1)
 		end
 	end
 })
 
-MultiCraft.register_craft( {
+minetest.register_craft( {
 	output = "fireflies:firefly_bottle",
 	recipe = {
 		{"fireflies:firefly"},
@@ -185,9 +185,9 @@ MultiCraft.register_craft( {
 
 -- register fireflies as decorations
 
-if MultiCraft.get_mapgen_setting("mg_name") == "v6" then
+if minetest.get_mapgen_setting("mg_name") == "v6" then
 
-	MultiCraft.register_decoration({
+	minetest.register_decoration({
 		name = "fireflies:firefly_low",
 		deco_type = "simple",
 		place_on = "default:dirt_with_grass",
@@ -199,7 +199,7 @@ if MultiCraft.get_mapgen_setting("mg_name") == "v6" then
 		decoration = "fireflies:hidden_firefly",
 	})
 
-	MultiCraft.register_decoration({
+	minetest.register_decoration({
 		name = "fireflies:firefly_high",
 		deco_type = "simple",
 		place_on = "default:dirt_with_grass",
@@ -213,7 +213,7 @@ if MultiCraft.get_mapgen_setting("mg_name") == "v6" then
 
 else
 
-	MultiCraft.register_decoration({
+	minetest.register_decoration({
 		name = "fireflies:firefly_low",
 		deco_type = "simple",
 		place_on = {
@@ -236,7 +236,7 @@ else
 		decoration = "fireflies:hidden_firefly",
 	})
 
-	MultiCraft.register_decoration({
+	minetest.register_decoration({
 		name = "fireflies:firefly_high",
 		deco_type = "simple",
 		place_on = {
@@ -263,14 +263,14 @@ end
 
 
 -- get decoration IDs
-local firefly_low = MultiCraft.get_decoration_id("fireflies:firefly_low")
-local firefly_high = MultiCraft.get_decoration_id("fireflies:firefly_high")
+local firefly_low = minetest.get_decoration_id("fireflies:firefly_low")
+local firefly_high = minetest.get_decoration_id("fireflies:firefly_high")
 
-MultiCraft.set_gen_notify({decoration = true}, {firefly_low, firefly_high})
+minetest.set_gen_notify({decoration = true}, {firefly_low, firefly_high})
 
 -- start nodetimers
-MultiCraft.register_on_generated(function(minp, maxp, blockseed)
-	local gennotify = MultiCraft.get_mapgen_object("gennotify")
+minetest.register_on_generated(function(minp, maxp, blockseed)
+	local gennotify = minetest.get_mapgen_object("gennotify")
 	local poslist = {}
 
 	for _, pos in ipairs(gennotify["decoration#"..firefly_low] or {}) do
@@ -285,7 +285,7 @@ MultiCraft.register_on_generated(function(minp, maxp, blockseed)
 	if #poslist ~= 0 then
 		for i = 1, #poslist do
 			local pos = poslist[i]
-			MultiCraft.get_node_timer(pos):start(1)
+			minetest.get_node_timer(pos):start(1)
 		end
 	end
 end)

@@ -1,8 +1,8 @@
-MultiCraft Game mod: give_initial_stuff
+Minetest Game mod: give_initial_stuff
 =====================================
 See license.txt for license information.
 
 Authors of source code
 ----------------------
 Perttu Ahola (celeron55) <celeron55@gmail.com> (MIT)
-Various MultiCraft developers and contributors (MIT)
+Various Minetest developers and contributors (MIT)

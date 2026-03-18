@@ -1,4 +1,4 @@
-MultiCraft Game mod: env_sounds
+Minetest Game mod: env_sounds
 =============================
 See license.txt for license information.
 

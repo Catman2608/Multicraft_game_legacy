@@ -1,4 +1,4 @@
-MultiCraft Game mod: farming
+Minetest Game mod: farming
 ==========================
 See license.txt for license information.
 
@@ -6,7 +6,7 @@ Authors of source code
 ----------------------
 Originally by PilzAdam (MIT)
 webdesigner97 (MIT)
-Various MultiCraft developers and contributors (MIT)
+Various Minetest developers and contributors (MIT)
 
 Authors of media (textures)
 ---------------------------

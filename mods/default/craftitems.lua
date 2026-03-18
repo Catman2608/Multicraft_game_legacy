@@ -3,7 +3,7 @@
 -- support for MT game translation.
 local S = default.get_translator
 
-local esc = MultiCraft.formspec_escape
+local esc = minetest.formspec_escape
 local formspec_size = "size[8,8]"
 
 local function formspec_core(tab)
@@ -51,7 +51,7 @@ local function book_on_use(itemstack, user)
 	local page, page_max, lines, string = 1, 1, {}, ""
 
 	-- Backwards compatibility
-	local old_data = MultiCraft.deserialize(itemstack:get_metadata())
+	local old_data = minetest.deserialize(itemstack:get_metadata())
 	if old_data then
 		meta:from_table({ fields = old_data })
 	end
@@ -89,14 +89,14 @@ local function book_on_use(itemstack, user)
 		formspec = formspec_read(owner, title, string, text, page, page_max)
 	end
 
-	MultiCraft.show_formspec(player_name, "default:book", formspec_size .. formspec)
+	minetest.show_formspec(player_name, "default:book", formspec_size .. formspec)
 	return itemstack
 end
 
 local max_text_size = 10000
 local max_title_size = 80
 local short_title_size = 35
-MultiCraft.register_on_player_receive_fields(function(player, formname, fields)
+minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if formname ~= "default:book" then return end
 	local player_name = player:get_player_name()
 	local inv = player:get_inventory()
@@ -123,7 +123,7 @@ MultiCraft.register_on_player_receive_fields(function(player, formname, fields)
 		end
 		tab_number = tab
 		local formspec = formspec_size .. formspec_core(tab) .. contents
-		MultiCraft.show_formspec(player_name, "default:book", formspec)
+		minetest.show_formspec(player_name, "default:book", formspec)
 		return
 	end
 
@@ -162,7 +162,7 @@ MultiCraft.register_on_player_receive_fields(function(player, formname, fields)
 			if inv:room_for_item("main", new_stack) then
 				inv:add_item("main", new_stack)
 			else
-				MultiCraft.add_item(player:get_pos(), new_stack)
+				minetest.add_item(player:get_pos(), new_stack)
 			end
 		else
 			stack:get_meta():from_table({ fields = data })
@@ -196,7 +196,7 @@ MultiCraft.register_on_player_receive_fields(function(player, formname, fields)
 	player:set_wielded_item(stack)
 end)
 
-MultiCraft.register_craftitem("default:skeleton_key", {
+minetest.register_craftitem("default:skeleton_key", {
 	description = S("Skeleton Key"),
 	inventory_image = "default_key_skeleton.png",
 	on_use = function(itemstack, user, pointed_thing)
@@ -205,13 +205,13 @@ MultiCraft.register_craftitem("default:skeleton_key", {
 		end
 
 		local pos = pointed_thing.under
-		local node = MultiCraft.get_node(pos)
+		local node = minetest.get_node(pos)
 
 		if not node then
 			return itemstack
 		end
 
-		local node_reg = MultiCraft.registered_nodes[node.name]
+		local node_reg = minetest.registered_nodes[node.name]
 		local on_skeleton_key_use = node_reg and node_reg.on_skeleton_key_use
 		if not on_skeleton_key_use then
 			return itemstack
@@ -227,7 +227,7 @@ MultiCraft.register_craftitem("default:skeleton_key", {
 		local secret, _, _ = on_skeleton_key_use(pos, user, newsecret)
 
 		if secret then
-			local inv = MultiCraft.get_inventory({type="player", name=user:get_player_name()})
+			local inv = minetest.get_inventory({type="player", name=user:get_player_name()})
 
 			-- update original itemstack
 			itemstack:take_item()
@@ -237,13 +237,13 @@ MultiCraft.register_craftitem("default:skeleton_key", {
 			local meta = new_stack:get_meta()
 			meta:set_string("secret", secret)
 			meta:set_string("description", S("Key to @1's @2", user:get_player_name(),
-				MultiCraft.registered_nodes[node.name].description))
+				minetest.registered_nodes[node.name].description))
 
 			if itemstack:get_count() == 0 then
 				itemstack = new_stack
 			else
 				if inv:add_item("main", new_stack):get_count() > 0 then
-					MultiCraft.add_item(user:get_pos(), new_stack)
+					minetest.add_item(user:get_pos(), new_stack)
 				end -- else: added to inventory successfully
 			end
 
@@ -256,21 +256,21 @@ MultiCraft.register_craftitem("default:skeleton_key", {
 -- Craftitem registry
 --
 
-MultiCraft.register_craftitem("default:blueberries", {
+minetest.register_craftitem("default:blueberries", {
 	description = S("Blueberries"),
 	inventory_image = "default_blueberries.png",
 	groups = {food_blueberries = 1, food_berry = 1},
-	on_use = MultiCraft.item_eat(2),
+	on_use = minetest.item_eat(2),
 })
 
-MultiCraft.register_craftitem("default:book", {
+minetest.register_craftitem("default:book", {
 	description = S("Book"),
 	inventory_image = "default_book.png",
 	groups = {book = 1, flammable = 3},
 	on_use = book_on_use,
 })
 
-MultiCraft.register_craftitem("default:book_written", {
+minetest.register_craftitem("default:book_written", {
 	description = S("Book with Text"),
 	inventory_image = "default_book_written.png",
 	groups = {book = 1, not_in_creative_inventory = 1, flammable = 3},
@@ -278,100 +278,100 @@ MultiCraft.register_craftitem("default:book_written", {
 	on_use = book_on_use,
 })
 
-MultiCraft.register_craftitem("default:bronze_ingot", {
+minetest.register_craftitem("default:bronze_ingot", {
 	description = S("Bronze Ingot"),
 	inventory_image = "default_bronze_ingot.png"
 })
 
-MultiCraft.register_craftitem("default:clay_brick", {
+minetest.register_craftitem("default:clay_brick", {
 	description = S("Clay Brick"),
 	inventory_image = "default_clay_brick.png",
 })
 
-MultiCraft.register_craftitem("default:clay_lump", {
+minetest.register_craftitem("default:clay_lump", {
 	description = S("Clay Lump"),
 	inventory_image = "default_clay_lump.png",
 })
 
-MultiCraft.register_craftitem("default:coal_lump", {
+minetest.register_craftitem("default:coal_lump", {
 	description = S("Coal Lump"),
 	inventory_image = "default_coal_lump.png",
 	groups = {coal = 1, flammable = 1}
 })
 
-MultiCraft.register_craftitem("default:copper_ingot", {
+minetest.register_craftitem("default:copper_ingot", {
 	description = S("Copper Ingot"),
 	inventory_image = "default_copper_ingot.png"
 })
 
-MultiCraft.register_craftitem("default:copper_lump", {
+minetest.register_craftitem("default:copper_lump", {
 	description = S("Copper Lump"),
 	inventory_image = "default_copper_lump.png"
 })
 
-MultiCraft.register_craftitem("default:diamond", {
+minetest.register_craftitem("default:diamond", {
 	description = S("Diamond"),
 	inventory_image = "default_diamond.png",
 })
 
-MultiCraft.register_craftitem("default:flint", {
+minetest.register_craftitem("default:flint", {
 	description = S("Flint"),
 	inventory_image = "default_flint.png"
 })
 
-MultiCraft.register_craftitem("default:gold_ingot", {
+minetest.register_craftitem("default:gold_ingot", {
 	description = S("Gold Ingot"),
 	inventory_image = "default_gold_ingot.png"
 })
 
-MultiCraft.register_craftitem("default:gold_lump", {
+minetest.register_craftitem("default:gold_lump", {
 	description = S("Gold Lump"),
 	inventory_image = "default_gold_lump.png"
 })
 
-MultiCraft.register_craftitem("default:iron_lump", {
+minetest.register_craftitem("default:iron_lump", {
 	description = S("Iron Lump"),
 	inventory_image = "default_iron_lump.png"
 })
 
-MultiCraft.register_craftitem("default:mese_crystal", {
+minetest.register_craftitem("default:mese_crystal", {
 	description = S("Mese Crystal"),
 	inventory_image = "default_mese_crystal.png",
 })
 
-MultiCraft.register_craftitem("default:mese_crystal_fragment", {
+minetest.register_craftitem("default:mese_crystal_fragment", {
 	description = S("Mese Crystal Fragment"),
 	inventory_image = "default_mese_crystal_fragment.png",
 })
 
-MultiCraft.register_craftitem("default:obsidian_shard", {
+minetest.register_craftitem("default:obsidian_shard", {
 	description = S("Obsidian Shard"),
 	inventory_image = "default_obsidian_shard.png",
 })
 
-MultiCraft.register_craftitem("default:paper", {
+minetest.register_craftitem("default:paper", {
 	description = S("Paper"),
 	inventory_image = "default_paper.png",
 	groups = {flammable = 3},
 })
 
-MultiCraft.register_craftitem("default:steel_ingot", {
+minetest.register_craftitem("default:steel_ingot", {
 	description = S("Steel Ingot"),
 	inventory_image = "default_steel_ingot.png"
 })
 
-MultiCraft.register_craftitem("default:stick", {
+minetest.register_craftitem("default:stick", {
 	description = S("Stick"),
 	inventory_image = "default_stick.png",
 	groups = {stick = 1, flammable = 2},
 })
 
-MultiCraft.register_craftitem("default:tin_ingot", {
+minetest.register_craftitem("default:tin_ingot", {
 	description = S("Tin Ingot"),
 	inventory_image = "default_tin_ingot.png"
 })
 
-MultiCraft.register_craftitem("default:tin_lump", {
+minetest.register_craftitem("default:tin_lump", {
 	description = S("Tin Lump"),
 	inventory_image = "default_tin_lump.png"
 })
@@ -380,7 +380,7 @@ MultiCraft.register_craftitem("default:tin_lump", {
 -- Crafting recipes
 --
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:book",
 	recipe = {
 		{"default:paper"},
@@ -391,7 +391,7 @@ MultiCraft.register_craft({
 
 default.register_craft_metadata_copy("default:book", "default:book_written")
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:bronze_ingot 9",
 	recipe = {
 		{"default:copper_ingot", "default:copper_ingot", "default:copper_ingot"},
@@ -400,49 +400,49 @@ MultiCraft.register_craft({
 	}
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:clay_brick 4",
 	recipe = {
 		{"default:brick"},
 	}
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:clay_lump 4",
 	recipe = {
 		{"default:clay"},
 	}
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:coal_lump 9",
 	recipe = {
 		{"default:coalblock"},
 	}
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:copper_ingot 9",
 	recipe = {
 		{"default:copperblock"},
 	}
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:diamond 9",
 	recipe = {
 		{"default:diamondblock"},
 	}
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:gold_ingot 9",
 	recipe = {
 		{"default:goldblock"},
 	}
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:mese_crystal",
 	recipe = {
 		{"default:mese_crystal_fragment", "default:mese_crystal_fragment", "default:mese_crystal_fragment"},
@@ -451,56 +451,56 @@ MultiCraft.register_craft({
 	}
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:mese_crystal 9",
 	recipe = {
 		{"default:mese"},
 	}
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:mese_crystal_fragment 9",
 	recipe = {
 		{"default:mese_crystal"},
 	}
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:obsidian_shard 9",
 	recipe = {
 		{"default:obsidian"}
 	}
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:paper",
 	recipe = {
 		{"default:papyrus", "default:papyrus", "default:papyrus"},
 	}
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:skeleton_key",
 	recipe = {
 		{"default:gold_ingot"},
 	}
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:steel_ingot 9",
 	recipe = {
 		{"default:steelblock"},
 	}
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:stick 4",
 	recipe = {
 		{"group:wood"},
 	}
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "default:tin_ingot 9",
 	recipe = {
 		{"default:tinblock"},
@@ -511,45 +511,45 @@ MultiCraft.register_craft({
 -- Cooking recipes
 --
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	type = "cooking",
 	output = "default:clay_brick",
 	recipe = "default:clay_lump",
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	type = "cooking",
 	output = "default:copper_ingot",
 	recipe = "default:copper_lump",
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	type = "cooking",
 	output = "default:gold_ingot",
 	recipe = "default:gold_lump",
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	type = "cooking",
 	output = "default:gold_ingot",
 	recipe = "default:key",
 	cooktime = 5,
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	type = "cooking",
 	output = "default:gold_ingot",
 	recipe = "default:skeleton_key",
 	cooktime = 5,
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	type = "cooking",
 	output = "default:steel_ingot",
 	recipe = "default:iron_lump",
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	type = "cooking",
 	output = "default:tin_ingot",
 	recipe = "default:tin_lump",
@@ -559,31 +559,31 @@ MultiCraft.register_craft({
 -- Fuels
 --
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	type = "fuel",
 	recipe = "default:book",
 	burntime = 3,
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	type = "fuel",
 	recipe = "default:book_written",
 	burntime = 3,
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	type = "fuel",
 	recipe = "default:coal_lump",
 	burntime = 40,
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	type = "fuel",
 	recipe = "default:paper",
 	burntime = 1,
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	type = "fuel",
 	recipe = "group:stick",
 	burntime = 1,

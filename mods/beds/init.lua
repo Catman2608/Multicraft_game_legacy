@@ -1,8 +1,8 @@
 -- beds/init.lua
 
 -- Load support for MT game translation.
-local S = MultiCraft.get_translator("beds")
-local esc = MultiCraft.formspec_escape
+local S = minetest.get_translator("beds")
+local esc = minetest.formspec_escape
 
 beds = {}
 beds.player = {}
@@ -16,7 +16,7 @@ beds.formspec = "size[8,11;true]" ..
 	"bgcolor[#080808BB;true]" ..
 	"button_exit[2,10;4,0.75;leave;" .. esc(S("Leave Bed")) .. "]"
 
-local modpath = MultiCraft.get_modpath("beds")
+local modpath = minetest.get_modpath("beds")
 
 -- Load files
 

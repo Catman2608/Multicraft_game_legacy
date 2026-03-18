@@ -1,14 +1,14 @@
 -- creative/init.lua
 
 -- Load support for MT game translation.
-local S = MultiCraft.get_translator("creative")
+local S = minetest.get_translator("creative")
 
 creative = {}
 creative.get_translator = S
 
 local function update_sfinv(name)
-	MultiCraft.after(0, function()
-		local player = MultiCraft.get_player_by_name(name)
+	minetest.after(0, function()
+		local player = minetest.get_player_by_name(name)
 		if player then
 			if sfinv.get_page(player):sub(1, 9) == "creative:" then
 				sfinv.set_page(player, sfinv.get_homepage_name(player))
@@ -19,7 +19,7 @@ local function update_sfinv(name)
 	end)
 end
 
-MultiCraft.register_privilege("creative", {
+minetest.register_privilege("creative", {
 	description = S("Allow player to use creative inventory"),
 	give_to_singleplayer = false,
 	give_to_admin = false,
@@ -28,24 +28,24 @@ MultiCraft.register_privilege("creative", {
 })
 
 -- Override the engine's creative mode function
-local old_is_creative_enabled = MultiCraft.is_creative_enabled
+local old_is_creative_enabled = minetest.is_creative_enabled
 
-function MultiCraft.is_creative_enabled(name)
+function minetest.is_creative_enabled(name)
 	if name == "" then
 		return old_is_creative_enabled(name)
 	end
-	return MultiCraft.check_player_privs(name, {creative = true}) or
+	return minetest.check_player_privs(name, {creative = true}) or
 		old_is_creative_enabled(name)
 end
 
 -- For backwards compatibility:
 function creative.is_enabled_for(name)
-	return MultiCraft.is_creative_enabled(name)
+	return minetest.is_creative_enabled(name)
 end
 
-dofile(MultiCraft.get_modpath("creative") .. "/inventory.lua")
+dofile(minetest.get_modpath("creative") .. "/inventory.lua")
 
-if MultiCraft.is_creative_enabled("") then
+if minetest.is_creative_enabled("") then
 	-- Dig time is modified according to difference (leveldiff) between tool
 	-- 'maxlevel' and node 'level'. Digtime is divided by the larger of
 	-- leveldiff and 1.
@@ -56,7 +56,7 @@ if MultiCraft.is_creative_enabled("") then
 	local caps = {times = {digtime, digtime, digtime}, uses = 0, maxlevel = 256}
 
 	-- Override the hand tool
-	MultiCraft.override_item("", {
+	minetest.override_item("", {
 		range = 10,
 		tool_capabilities = {
 			full_punch_interval = 0.5,
@@ -77,17 +77,17 @@ if MultiCraft.is_creative_enabled("") then
 end
 
 -- Unlimited node placement
-MultiCraft.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack)
+minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack)
 	if placer and placer:is_player() then
-		return MultiCraft.is_creative_enabled(placer:get_player_name())
+		return minetest.is_creative_enabled(placer:get_player_name())
 	end
 end)
 
 -- Don't pick up if the item is already in the inventory
-local old_handle_node_drops = MultiCraft.handle_node_drops
-function MultiCraft.handle_node_drops(pos, drops, digger)
+local old_handle_node_drops = minetest.handle_node_drops
+function minetest.handle_node_drops(pos, drops, digger)
 	if not digger or not digger:is_player() or
-		not MultiCraft.is_creative_enabled(digger:get_player_name()) then
+		not minetest.is_creative_enabled(digger:get_player_name()) then
 		return old_handle_node_drops(pos, drops, digger)
 	end
 	local inv = digger:get_inventory()

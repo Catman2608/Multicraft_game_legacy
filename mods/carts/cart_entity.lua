@@ -41,7 +41,7 @@ function cart_entity:on_activate(staticdata, dtime_s)
 	if string.sub(staticdata, 1, string.len("return")) ~= "return" then
 		return
 	end
-	local data = MultiCraft.deserialize(staticdata)
+	local data = minetest.deserialize(staticdata)
 	if type(data) ~= "table" then
 		return
 	end
@@ -52,7 +52,7 @@ function cart_entity:on_activate(staticdata, dtime_s)
 end
 
 function cart_entity:get_staticdata()
-	return MultiCraft.serialize({
+	return minetest.serialize({
 		railtype = self.railtype,
 		old_dir = self.old_dir
 	})
@@ -71,8 +71,8 @@ function cart_entity:on_punch(puncher, time_from_last_punch, tool_capabilities, 
 	local pos = self.object:get_pos()
 	local vel = self.object:get_velocity()
 	if not self.railtype or vector.equals(vel, {x=0, y=0, z=0}) then
-		local node = MultiCraft.get_node(pos).name
-		self.railtype = MultiCraft.get_item_group(node, "connect_to_raillike")
+		local node = minetest.get_node(pos).name
+		self.railtype = minetest.get_item_group(node, "connect_to_raillike")
 	end
 	-- Punched by non-player
 	if not puncher or not puncher:is_player() then
@@ -87,14 +87,14 @@ function cart_entity:on_punch(puncher, time_from_last_punch, tool_capabilities, 
 	-- Player digs cart by sneak-punch
 	if puncher:get_player_control().sneak then
 		if self.sound_handle then
-			MultiCraft.sound_stop(self.sound_handle)
+			minetest.sound_stop(self.sound_handle)
 		end
 		-- Detach driver and items
 		if self.driver then
 			if self.old_pos then
 				self.object:set_pos(self.old_pos)
 			end
-			local player = MultiCraft.get_player_by_name(self.driver)
+			local player = minetest.get_player_by_name(self.driver)
 			carts:manage_attachment(player, nil)
 		end
 		for _, obj_ in ipairs(self.attached_items) do
@@ -104,12 +104,12 @@ function cart_entity:on_punch(puncher, time_from_last_punch, tool_capabilities, 
 		end
 		-- Pick up cart
 		local inv = puncher:get_inventory()
-		if not MultiCraft.is_creative_enabled(puncher:get_player_name())
+		if not minetest.is_creative_enabled(puncher:get_player_name())
 				or not inv:contains_item("main", "carts:cart") then
 			local leftover = inv:add_item("main", "carts:cart")
 			-- If no room in inventory add a replacement cart to the world
 			if not leftover:is_empty() then
-				MultiCraft.add_item(self.object:get_pos(), leftover)
+				minetest.add_item(self.object:get_pos(), leftover)
 			end
 		end
 		self.object:remove()
@@ -161,12 +161,12 @@ local function rail_sound(self, dtime)
 	if self.sound_handle then
 		local handle = self.sound_handle
 		self.sound_handle = nil
-		MultiCraft.after(0.2, MultiCraft.sound_stop, handle)
+		minetest.after(0.2, minetest.sound_stop, handle)
 	end
 	local vel = self.object:get_velocity()
 	local speed = vector.length(vel)
 	if speed > 0 then
-		self.sound_handle = MultiCraft.sound_play(
+		self.sound_handle = minetest.sound_play(
 			"carts_cart_moving", {
 			object = self.object,
 			gain = (speed / carts.speed_max) / 2,
@@ -176,7 +176,7 @@ local function rail_sound(self, dtime)
 end
 
 local function get_railparams(pos)
-	local node = MultiCraft.get_node(pos)
+	local node = minetest.get_node(pos)
 	return carts.railparams[node.name] or {}
 end
 
@@ -209,7 +209,7 @@ local function rail_on_step(self, dtime)
 
 	-- Get player controls
 	if self.driver then
-		player = MultiCraft.get_player_by_name(self.driver)
+		player = minetest.get_player_by_name(self.driver)
 		if player then
 			ctrl = player:get_player_control()
 		end
@@ -323,7 +323,7 @@ local function rail_on_step(self, dtime)
 
 	if self.punched then
 		-- Collect dropped items
-		for _, obj_ in pairs(MultiCraft.get_objects_inside_radius(pos, 1)) do
+		for _, obj_ in pairs(minetest.get_objects_inside_radius(pos, 1)) do
 			local ent = obj_:get_luaentity()
 			-- Careful here: physical_state and disable_physics are item-internal APIs
 			if ent and ent.name == "__builtin:item" and ent.physical_state then
@@ -381,16 +381,16 @@ function cart_entity:on_step(dtime)
 	rail_sound(self, dtime)
 end
 
-MultiCraft.register_entity("carts:cart", cart_entity)
+minetest.register_entity("carts:cart", cart_entity)
 
-MultiCraft.register_craftitem("carts:cart", {
+minetest.register_craftitem("carts:cart", {
 	description = S("Cart") .. "\n" .. S("(Sneak+Click to pick up)"),
-	inventory_image = MultiCraft.inventorycube("carts_cart_top.png", "carts_cart_front.png", "carts_cart_side.png"),
+	inventory_image = minetest.inventorycube("carts_cart_top.png", "carts_cart_front.png", "carts_cart_side.png"),
 	wield_image = "carts_cart_front.png",
 	on_place = function(itemstack, placer, pointed_thing)
 		local under = pointed_thing.under
-		local node = MultiCraft.get_node(under)
-		local udef = MultiCraft.registered_nodes[node.name]
+		local node = minetest.get_node(under)
+		local udef = minetest.registered_nodes[node.name]
 		if udef and udef.on_rightclick and
 				not (placer and placer:is_player() and
 				placer:get_player_control().sneak) then
@@ -402,24 +402,24 @@ MultiCraft.register_craftitem("carts:cart", {
 			return
 		end
 		if carts:is_rail(pointed_thing.under) then
-			MultiCraft.add_entity(pointed_thing.under, "carts:cart")
+			minetest.add_entity(pointed_thing.under, "carts:cart")
 		elseif carts:is_rail(pointed_thing.above) then
-			MultiCraft.add_entity(pointed_thing.above, "carts:cart")
+			minetest.add_entity(pointed_thing.above, "carts:cart")
 		else
 			return
 		end
 
-		MultiCraft.sound_play({name = "default_place_node_metal", gain = 0.5},
+		minetest.sound_play({name = "default_place_node_metal", gain = 0.5},
 			{pos = pointed_thing.above}, true)
 
-		if not MultiCraft.is_creative_enabled(placer:get_player_name()) then
+		if not minetest.is_creative_enabled(placer:get_player_name()) then
 			itemstack:take_item()
 		end
 		return itemstack
 	end,
 })
 
-MultiCraft.register_craft({
+minetest.register_craft({
 	output = "carts:cart",
 	recipe = {
 		{"default:steel_ingot", "", "default:steel_ingot"},

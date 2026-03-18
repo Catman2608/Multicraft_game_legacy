@@ -1,11 +1,11 @@
-MultiCraft Game mod: flowers
+Minetest Game mod: flowers
 ==========================
 See license.txt for license information.
 
 Authors of source code
 ----------------------
 Originally by Ironzorg (MIT) and VanessaE (MIT)
-Various MultiCraft developers and contributors (MIT)
+Various Minetest developers and contributors (MIT)
 
 Authors of media (textures)
 ---------------------------

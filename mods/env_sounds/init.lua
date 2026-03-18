@@ -21,7 +21,7 @@ local allsounds = {
 	},
 }
 
-if MultiCraft.settings:get_bool("river_source_sounds") then
+if minetest.settings:get_bool("river_source_sounds") then
 	table.insert(allsounds["env_sounds_water"].trigger,
 		"default:river_water_source")
 end
@@ -47,7 +47,7 @@ local function update_sound(player)
 	local areamin = vector.subtract(ppos, radius)
 	local areamax = vector.add(ppos, radius)
 
-	local pos = MultiCraft.find_nodes_in_area(areamin, areamax, cache_triggers, true)
+	local pos = minetest.find_nodes_in_area(areamin, areamax, cache_triggers, true)
 	if next(pos) == nil then -- If table empty
 		return
 	end
@@ -83,7 +83,7 @@ local function update_sound(player)
 			end
 			gain = math.min(gain, def.max_volume)
 
-			MultiCraft.sound_play(sound, {
+			minetest.sound_play(sound, {
 				pos = posav,
 				to_player = player_name,
 				gain = gain,
@@ -95,7 +95,7 @@ end
 
 -- Update sound when player joins
 
-MultiCraft.register_on_joinplayer(function(player)
+minetest.register_on_joinplayer(function(player)
 	update_sound(player)
 end)
 
@@ -103,10 +103,10 @@ end)
 -- Cyclic sound update
 
 local function cyclic_update()
-	for _, player in pairs(MultiCraft.get_connected_players()) do
+	for _, player in pairs(minetest.get_connected_players()) do
 		update_sound(player)
 	end
-	MultiCraft.after(3.5, cyclic_update)
+	minetest.after(3.5, cyclic_update)
 end
 
-MultiCraft.after(0, cyclic_update)
+minetest.after(0, cyclic_update)
